@@ -1,0 +1,9 @@
+﻿{
+    "private":  true,
+    "exports":  {
+                    ".":  "./src/index.ts"
+                },
+    "name":  "@repo/database",
+    "version":  "1.0.0",
+    "type":  "module"
+}

@@ -1,0 +1,9 @@
+﻿{
+    "private":  true,
+    "exports":  {
+                    ".":  "./src/index.ts"
+                },
+    "name":  "@repo/scheduling-engine",
+    "version":  "1.0.0",
+    "type":  "module"
+}
