@@ -112,6 +112,9 @@ pnpm build
 # Open the Drizzle database management interface
 pnpm db:studio
 
+# Create a reusable local test account and sample projects
+pnpm db:seed
+
 # Generate the Postman collection
 pnpm postman:generate
 ```
@@ -119,6 +122,10 @@ pnpm postman:generate
 The generated collection is written to `postman/ai-project-planner.postman_collection.json`.
 Import this file into Postman, set the `baseUrl` variable if needed, and replace the
 `projectId`, `phaseId`, and `taskId` variables with IDs from your local data.
+
+The local seed account is `demo@ai-project-planner.local` with password `DemoPlanner123!`.
+Run `API_URL=http://localhost:8787 pnpm db:seed` to target a different API URL. On PowerShell,
+use `$env:API_URL="http://localhost:8787"` before running the command.
 
 ## Project Structure
 

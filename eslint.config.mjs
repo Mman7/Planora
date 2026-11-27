@@ -88,6 +88,7 @@ export default defineConfig([
   // ==================================================
 
   globalIgnores([
+    "apps/api/scripts/seed.mjs",
     "scripts/generate-postman-collection.mjs",
     "**/node_modules/**",
     "**/.next/**",
