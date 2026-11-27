@@ -1,0 +1,18 @@
+import { Hono } from "hono";
+import type { AppEnv } from "../../config/env";
+import * as controller from "./planning.controller";
+export const planningRoutes = new Hono<AppEnv>();
+const PHASE_PATH = "/:projectId/phases";
+const TASK_PATH = "/:projectId/tasks";
+planningRoutes.get(PHASE_PATH, controller.listPhases);
+planningRoutes.post(PHASE_PATH, controller.createPhase);
+planningRoutes.get(`${PHASE_PATH}/:phaseId`, controller.getPhase);
+planningRoutes.patch(`${PHASE_PATH}/:phaseId`, controller.updatePhase);
+planningRoutes.delete(`${PHASE_PATH}/:phaseId`, controller.deletePhase);
+planningRoutes.get(TASK_PATH, controller.listTasks);
+planningRoutes.post(TASK_PATH, controller.createTask);
+planningRoutes.get(`${TASK_PATH}/:taskId`, controller.getTask);
+planningRoutes.patch(`${TASK_PATH}/:taskId`, controller.updateTask);
+planningRoutes.delete(`${TASK_PATH}/:taskId`, controller.deleteTask);
+planningRoutes.post(`${TASK_PATH}/:taskId/dependencies`, controller.addDependency);
+planningRoutes.delete(`${TASK_PATH}/:taskId/dependencies`, controller.removeDependency);

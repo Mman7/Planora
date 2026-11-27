@@ -188,3 +188,16 @@ ESLint enforces:
 
 Code review is required for architectural responsibilities
 that cannot be reliably checked by static analysis.
+
+## Code Formatting Requirements
+
+- Prettier is the mandatory code formatter.
+- After creating or modifying files, run Prettier on all changed files.
+- Do not rely on ESLint to format code.
+- Do not manually imitate Prettier formatting.
+- Before completing a task, run:
+  - `pnpm exec prettier --write <changed-files>`
+  - `pnpm exec eslint <changed-files>`
+  - `pnpm exec tsc --noEmit` (where applicable)
+- Fix all formatting and lint errors before reporting completion.
+- Never claim formatting or linting passed unless the commands were executed successfully.

@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1795775815361,
+      "tag": "0000_cynical_silk_fever",
+      "breakpoints": true
+    }
+  ]
+}

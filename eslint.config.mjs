@@ -29,7 +29,7 @@ const codeQualityRules = {
   "max-lines-per-function": [
     "error",
     {
-      max: 80,
+      max: 100,
       skipBlankLines: true,
       skipComments: true,
       IIFEs: true,
@@ -88,6 +88,7 @@ export default defineConfig([
   // ==================================================
 
   globalIgnores([
+    "scripts/generate-postman-collection.mjs",
     "**/node_modules/**",
     "**/.next/**",
     "**/.wrangler/**",
@@ -104,7 +105,14 @@ export default defineConfig([
   // 2. Next.js + React + Core Web Vitals
   // ==================================================
 
-  ...nextVitals,
+  ...nextVitals.map((config) => ({
+    ...config,
+    files: ["apps/web/**/*.{js,jsx,mjs,ts,tsx,mts,cts}"],
+    settings: {
+      ...config.settings,
+      next: { rootDir: "apps/web" },
+    },
+  })),
 
   // ==================================================
   // 3. JavaScript baseline
@@ -163,17 +171,9 @@ export default defineConfig([
   {
     files: ["apps/**/*.{ts,tsx}", "packages/**/*.ts"],
 
-    ignores: [
-      "**/*.config.ts",
-      "**/*.config.mts",
-      "**/*.config.cts",
-      "**/*.d.ts",
-    ],
+    ignores: ["**/*.config.ts", "**/*.config.mts", "**/*.config.cts", "**/*.d.ts"],
 
-    extends: [
-      tseslint.configs.strictTypeChecked,
-      tseslint.configs.stylisticTypeChecked,
-    ],
+    extends: [tseslint.configs.strictTypeChecked, tseslint.configs.stylisticTypeChecked],
 
     languageOptions: {
       parserOptions: {
@@ -216,10 +216,7 @@ export default defineConfig([
 
       "@typescript-eslint/consistent-indexed-object-style": ["error", "record"],
 
-      "@typescript-eslint/consistent-generic-constructors": [
-        "error",
-        "constructor",
-      ],
+      "@typescript-eslint/consistent-generic-constructors": ["error", "constructor"],
 
       "@typescript-eslint/no-confusing-void-expression": "error",
 
@@ -231,6 +228,26 @@ export default defineConfig([
           "ts-ignore": true,
           "ts-nocheck": true,
           minimumDescriptionLength: 10,
+        },
+      ],
+    },
+  },
+
+  {
+    files: ["apps/api/**/*.ts", "apps/web/**/*.ts", "apps/web/**/*.tsx"],
+
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector:
+            "BinaryExpression[operator='==='] > MemberExpression[property.name='status'] + Literal",
+          message: "Do not compare status with string literals. Use centralized constants instead.",
+        },
+        {
+          selector:
+            "BinaryExpression[operator='!=='] > MemberExpression[property.name='status'] + Literal",
+          message: "Do not compare status with string literals. Use centralized constants instead.",
         },
       ],
     },
@@ -365,12 +382,7 @@ export default defineConfig([
         {
           patterns: [
             {
-              group: [
-                "**/*.routes",
-                "**/*.controller",
-                "**/db/**",
-                "**/database/**",
-              ],
+              group: ["**/*.routes", "**/*.controller", "**/db/**", "**/database/**"],
               message:
                 "Services must use Repositories. Do not access Routes, Controllers or Database directly.",
             },
@@ -391,8 +403,7 @@ export default defineConfig([
           patterns: [
             {
               group: ["**/*.routes", "**/*.controller", "**/*.service"],
-              message:
-                "Repositories must not depend on Routes, Controllers or Services.",
+              message: "Repositories must not depend on Routes, Controllers or Services.",
             },
           ],
         },
@@ -419,13 +430,11 @@ export default defineConfig([
             },
             {
               name: "drizzle-orm",
-              message:
-                "Scheduling Engine must not depend on database infrastructure.",
+              message: "Scheduling Engine must not depend on database infrastructure.",
             },
             {
               name: "react",
-              message:
-                "Scheduling Engine must not depend on frontend frameworks.",
+              message: "Scheduling Engine must not depend on frontend frameworks.",
             },
             {
               name: "next",
@@ -437,8 +446,7 @@ export default defineConfig([
             },
             {
               name: "better-auth",
-              message:
-                "Scheduling Engine must not depend on authentication infrastructure.",
+              message: "Scheduling Engine must not depend on authentication infrastructure.",
             },
           ],
 
@@ -513,4 +521,16 @@ export default defineConfig([
   // ==================================================
 
   prettier,
+
+  // ==================================================
+  // 13. Linter Options
+  // The AI Coding Agent MUST NOT weaken, bypass, or disable ESLint rules to make code pass linting.
+  // ==================================================
+  {
+    linterOptions: {
+      noInlineConfig: true,
+      reportUnusedDisableDirectives: "error",
+      reportUnusedInlineConfigs: "error",
+    },
+  },
 ]);

@@ -1,9 +1,15 @@
-﻿{
-    "private":  true,
-    "exports":  {
-                    ".":  "./src/index.ts"
-                },
-    "name":  "@repo/shared",
-    "version":  "1.0.0",
-    "type":  "module"
+{
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "name": "@repo/shared",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "zod": "^4.6.7"
+  }
 }

@@ -1,5 +1,4 @@
-export type View =
-  "dashboard" | "create" | "project" | "assistant" | "settings";
+export type View = "dashboard" | "create" | "project" | "assistant" | "settings";
 export type ProjectTab = "overview" | "tasks" | "timeline";
 export type TaskStatus = "Done" | "In progress" | "To do";
 export type Priority = "High" | "Medium";
@@ -176,11 +175,4 @@ export const RECENT_ACTIVITY = [
   ["You created", "Q1 content calendar", "Yesterday"],
 ] as const;
 
-export const DATE_LABELS = [
-  "Nov 24",
-  "Dec 1",
-  "Dec 8",
-  "Dec 15",
-  "Dec 22",
-  "Dec 29",
-];
+export const DATE_LABELS = ["Nov 24", "Dec 1", "Dec 8", "Dec 15", "Dec 22", "Dec 29"];
