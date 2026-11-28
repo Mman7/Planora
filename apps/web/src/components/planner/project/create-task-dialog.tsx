@@ -63,19 +63,26 @@ function validateCreateForm(form: FormState): string | null {
   return dateValidation.valid ? null : (dateValidation.error ?? "Invalid date range.");
 }
 
-function getInitialCreateForm(
-  projects: Project[],
-  defaultProjectId: string,
-  defaultPhaseId?: string | null,
-  currentUserId?: string,
-): FormState {
+function getInitialCreateForm({
+  projects,
+  defaultProjectId,
+  defaultPhaseId,
+  currentUserId,
+  defaultStatus = TaskStatus.Todo,
+}: {
+  projects: Project[];
+  defaultProjectId: string;
+  defaultPhaseId?: string | null;
+  currentUserId?: string;
+  defaultStatus?: TaskStatus;
+}): FormState {
   return {
     projectId: defaultProjectId || (projects[0]?.id ?? ""),
     title: "",
     description: "",
     phaseId: defaultPhaseId ?? NO_PHASE_VALUE,
     priority: Priority.Medium,
-    status: TaskStatus.Todo,
+    status: defaultStatus,
     assigneeId: currentUserId ?? UNASSIGNED_USER,
     startDate: "",
     dueDate: "",
@@ -83,10 +90,54 @@ function getInitialCreateForm(
   };
 }
 
+async function submitCreateTask({
+  form,
+  onCreate,
+  onClose,
+  setError,
+  setSubmitting,
+}: {
+  form: FormState;
+  onCreate: (projectId: string, input: CreateTaskPayload) => Promise<void>;
+  onClose: () => void;
+  setError: (message: string | null) => void;
+  setSubmitting: (value: boolean) => void;
+}) {
+  const validationError = validateCreateForm(form);
+  if (validationError) {
+    setError(validationError);
+    return;
+  }
+  setError(null);
+  setSubmitting(true);
+  try {
+    await onCreate(form.projectId, buildPayload(form));
+    onClose();
+  } catch (err) {
+    setError(err instanceof Error ? err.message : "Failed to create task");
+  } finally {
+    setSubmitting(false);
+  }
+}
+
+function hasOutsidePhaseWarning(
+  form: FormState,
+  selectedPhase: Project["phases"][number] | undefined,
+) {
+  return (
+    Boolean(selectedPhase) &&
+    isTaskOutsidePhaseDates(
+      { startDate: form.startDate || null, dueDate: form.dueDate || null },
+      selectedPhase ?? { startDate: null, dueDate: null },
+    )
+  );
+}
+
 export function CreateTaskDialog({
   projects,
   defaultProjectId,
   defaultPhaseId,
+  defaultStatus = TaskStatus.Todo,
   currentUser,
   onClose,
   onCreate,
@@ -94,12 +145,19 @@ export function CreateTaskDialog({
   projects: Project[];
   defaultProjectId: string;
   defaultPhaseId?: string | null;
+  defaultStatus?: TaskStatus;
   currentUser: CurrentUser | null;
   onClose: () => void;
   onCreate: (projectId: string, input: CreateTaskPayload) => Promise<void>;
 }) {
   const [form, setForm] = useState<FormState>(() =>
-    getInitialCreateForm(projects, defaultProjectId, defaultPhaseId, currentUser?.id),
+    getInitialCreateForm({
+      projects,
+      defaultProjectId,
+      defaultPhaseId,
+      currentUserId: currentUser?.id,
+      defaultStatus,
+    }),
   );
   const [showScheduling, setShowScheduling] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -107,33 +165,10 @@ export function CreateTaskDialog({
 
   const phases = projects.find((item) => item.id === form.projectId)?.phases ?? [];
   const selectedPhase = phases.find((item) => item.id === form.phaseId);
-  const outsidePhaseWarning =
-    Boolean(selectedPhase) &&
-    isTaskOutsidePhaseDates(
-      { startDate: form.startDate || null, dueDate: form.dueDate || null },
-      selectedPhase ?? { startDate: null, dueDate: null },
-    );
+  const outsidePhaseWarning = hasOutsidePhaseWarning(form, selectedPhase);
 
   const patchForm = (patch: Partial<FormState>) => {
     setForm((prev) => ({ ...prev, ...patch }));
-  };
-
-  const handleSubmit = async () => {
-    const validationError = validateCreateForm(form);
-    if (validationError) {
-      setError(validationError);
-      return;
-    }
-    setError(null);
-    setSubmitting(true);
-    try {
-      await onCreate(form.projectId, buildPayload(form));
-      onClose();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to create task");
-    } finally {
-      setSubmitting(false);
-    }
   };
 
   return (
@@ -174,7 +209,7 @@ export function CreateTaskDialog({
           submitting={submitting}
           onClose={onClose}
           onSubmit={() => {
-            void handleSubmit();
+            void submitCreateTask({ form, onCreate, onClose, setError, setSubmitting });
           }}
         />
       </DialogContent>

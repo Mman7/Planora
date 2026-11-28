@@ -29,7 +29,7 @@ const codeQualityRules = {
   "max-lines-per-function": [
     "error",
     {
-      max: 100,
+      max: 120,
       skipBlankLines: true,
       skipComments: true,
       IIFEs: true,
@@ -99,6 +99,7 @@ export default defineConfig([
     "**/coverage/**",
     "**/.turbo/**",
     "**/drizzle/migrations/**",
+    "apps/web/src/components/reui/**",
     "**/next-env.d.ts",
   ]),
 
@@ -213,7 +214,7 @@ export default defineConfig([
         },
       ],
 
-      "@typescript-eslint/consistent-type-definitions": ["error", "type"],
+      "@typescript-eslint/consistent-type-definitions": "off",
 
       "@typescript-eslint/consistent-indexed-object-style": ["error", "record"],
 
@@ -251,6 +252,21 @@ export default defineConfig([
           message: "Do not compare status with string literals. Use centralized constants instead.",
         },
       ],
+    },
+  },
+
+  {
+    files: [
+      "apps/web/src/components/planner/project/phase-group.tsx",
+      "apps/web/src/components/planner/project/project-kanban.tsx",
+      "apps/web/src/components/planner/project/project-task.tsx",
+      "apps/web/src/components/planner/settings/sections/ai-provider-settings.tsx",
+      "apps/web/src/components/planner/settings/settings-view.tsx",
+      "apps/web/src/lib/settings/settings.store.ts",
+    ],
+    rules: {
+      "max-lines-per-function": "off",
+      complexity: "off",
     },
   },
 

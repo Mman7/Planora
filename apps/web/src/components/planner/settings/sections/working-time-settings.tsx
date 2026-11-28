@@ -1,7 +1,6 @@
 "use client";
 
-import { useSettingsStore, WEEKDAY_LABELS } from "@/lib/settings";
-import type { SettingsSection } from "@/lib/settings";
+import { useSettingsStore, WEEKDAY_LABELS, type SettingsSection } from "@/lib/settings";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
@@ -17,8 +16,7 @@ export function WorkingTimeSettingsSection({ registerRef }: SectionProps) {
 
   if (!draft) return null;
 
-  const { workingDays, startTime, endTime, breakEnabled, breakStart, breakEnd } =
-    draft.workingTime;
+  const { workingDays, startTime, endTime, breakEnabled, breakStart, breakEnd } = draft.workingTime;
 
   const toggleDay = (dayIndex: number) => {
     const current = new Set(workingDays);
@@ -31,7 +29,14 @@ export function WorkingTimeSettingsSection({ registerRef }: SectionProps) {
     updateDraft("workingTime", { workingDays: Array.from(current).sort() });
   };
 
-  const summary = buildWorkingTimeSummary(workingDays, startTime, endTime, breakEnabled, breakStart, breakEnd);
+  const summary = buildWorkingTimeSummary({
+    workingDays,
+    startTime,
+    endTime,
+    breakEnabled,
+    breakStart,
+    breakEnd,
+  });
 
   return (
     <SettingsGroup id="working-time" title="Working time" registerRef={registerRef}>
@@ -41,7 +46,9 @@ export function WorkingTimeSettingsSection({ registerRef }: SectionProps) {
             <button
               key={day}
               type="button"
-              onClick={() => toggleDay(index)}
+              onClick={() => {
+                toggleDay(index);
+              }}
               aria-pressed={workingDays.includes(index)}
               className={cn(
                 "flex h-7 w-9 items-center justify-center rounded-md text-xs font-medium transition-colors",
@@ -60,7 +67,9 @@ export function WorkingTimeSettingsSection({ registerRef }: SectionProps) {
           id="settings-start-time"
           type="time"
           value={startTime}
-          onChange={(e) => updateDraft("workingTime", { startTime: e.target.value })}
+          onChange={(e) => {
+            updateDraft("workingTime", { startTime: e.target.value });
+          }}
           className="w-28"
         />
       </SettingRow>
@@ -69,7 +78,9 @@ export function WorkingTimeSettingsSection({ registerRef }: SectionProps) {
           id="settings-end-time"
           type="time"
           value={endTime}
-          onChange={(e) => updateDraft("workingTime", { endTime: e.target.value })}
+          onChange={(e) => {
+            updateDraft("workingTime", { endTime: e.target.value });
+          }}
           className="w-28"
         />
       </SettingRow>
@@ -77,13 +88,13 @@ export function WorkingTimeSettingsSection({ registerRef }: SectionProps) {
         <Switch
           id="settings-break-toggle"
           checked={breakEnabled}
-          onCheckedChange={(checked) =>
+          onCheckedChange={(checked) => {
             updateDraft("workingTime", {
               breakEnabled: checked,
               breakStart: checked ? (breakStart ?? "12:00") : null,
               breakEnd: checked ? (breakEnd ?? "13:00") : null,
-            })
-          }
+            });
+          }}
           aria-label="Enable break time"
         />
       </SettingRow>
@@ -94,7 +105,9 @@ export function WorkingTimeSettingsSection({ registerRef }: SectionProps) {
               id="settings-break-start"
               type="time"
               value={breakStart ?? "12:00"}
-              onChange={(e) => updateDraft("workingTime", { breakStart: e.target.value })}
+              onChange={(e) => {
+                updateDraft("workingTime", { breakStart: e.target.value });
+              }}
               className="w-28"
             />
           </SettingRow>
@@ -103,7 +116,9 @@ export function WorkingTimeSettingsSection({ registerRef }: SectionProps) {
               id="settings-break-end"
               type="time"
               value={breakEnd ?? "13:00"}
-              onChange={(e) => updateDraft("workingTime", { breakEnd: e.target.value })}
+              onChange={(e) => {
+                updateDraft("workingTime", { breakEnd: e.target.value });
+              }}
               className="w-28"
             />
           </SettingRow>
@@ -116,25 +131,28 @@ export function WorkingTimeSettingsSection({ registerRef }: SectionProps) {
   );
 }
 
-function buildWorkingTimeSummary(
-  workingDays: number[],
-  startTime: string,
-  endTime: string,
-  breakEnabled: boolean,
-  breakStart: string | null,
-  breakEnd: string | null,
-): string {
+function buildWorkingTimeSummary({
+  workingDays,
+  startTime,
+  endTime,
+  breakEnabled,
+  breakStart,
+  breakEnd,
+}: {
+  workingDays: number[];
+  startTime: string;
+  endTime: string;
+  breakEnabled: boolean;
+  breakStart: string | null;
+  breakEnd: string | null;
+}): string {
   const sorted = [...workingDays].sort();
   const dayNames = sorted.map((d) => WEEKDAY_LABELS[d]);
 
   let daysStr: string;
   if (sorted.length === 7) {
     daysStr = "Every day";
-  } else if (
-    sorted.length === 5 &&
-    sorted[0] === 0 &&
-    sorted[4] === 4
-  ) {
+  } else if (sorted.length === 5 && sorted[0] === 0 && sorted[4] === 4) {
     daysStr = "Monday – Friday";
   } else {
     daysStr = dayNames.join(", ");

@@ -201,3 +201,37 @@ that cannot be reliably checked by static analysis.
   - `pnpm exec tsc --noEmit` (where applicable)
 - Fix all formatting and lint errors before reporting completion.
 - Never claim formatting or linting passed unless the commands were executed successfully.
+
+## TypeScript Type Definition Convention
+
+### 1. Interface — Object Contracts
+
+Use `interface` for:
+
+- Domain entities and object models
+- API Request / Response DTOs
+- Repository contracts
+- Service contracts
+- Component Props
+- Configuration objects
+
+### 2. Type — Type Composition & Type Logic
+
+Use `type` for:
+
+- Union types
+- Intersection types
+- Primitive aliases
+- Tuple types
+- Function types
+- Conditional types
+- Mapped types
+- Utility type compositions
+
+### 3. General Rules
+
+- Do not use `type` simply to replace an object-shaped interface.
+- Do not use `interface` for union or tuple definitions.
+- Prefer `interface extends` when extending object contracts.
+- Prefer `&` when composing type aliases.
+- Avoid unnecessary duplicate type definitions.

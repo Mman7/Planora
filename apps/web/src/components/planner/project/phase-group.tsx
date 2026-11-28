@@ -94,7 +94,7 @@ export function PhaseGroup({
         event.dataTransfer.setData("text/plain", phase.id);
 
         const dragPreview = document.createElement("div");
-        dragPreview.textContent = `|  ${phase.name}  |  ${phase.tasks.length} tasks  |  ${phase.progress}%`;
+        dragPreview.textContent = `|  ${phase.name}  |  ${String(phase.tasks.length)} tasks  |  ${String(phase.progress)}%`;
         dragPreview.style.position = "fixed";
         dragPreview.style.top = "-1000px";
         dragPreview.style.left = "-1000px";

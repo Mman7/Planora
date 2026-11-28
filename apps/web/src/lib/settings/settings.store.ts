@@ -43,9 +43,13 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
   aiProvider: null,
   repository: null,
 
-  setRepository: (repo) => set({ repository: repo }),
+  setRepository: (repo) => {
+    set({ repository: repo });
+  },
 
-  setActiveSection: (section) => set({ activeSection: section }),
+  setActiveSection: (section) => {
+    set({ activeSection: section });
+  },
 
   loadSettings: async () => {
     const { repository } = get();
@@ -90,10 +94,9 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
       "workingTime",
       "calendar",
       "notifications",
+      "aiProvider",
     ];
-    return sections.filter(
-      (key) => JSON.stringify(original[key]) !== JSON.stringify(draft[key]),
-    );
+    return sections.filter((key) => JSON.stringify(original[key]) !== JSON.stringify(draft[key]));
   },
 
   saveChanges: async () => {
@@ -122,6 +125,8 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
             break;
           case "notifications":
             await repository.updateNotifications(draft.notifications);
+            break;
+          case "aiProvider":
             break;
         }
       } catch (err) {

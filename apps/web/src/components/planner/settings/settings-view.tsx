@@ -83,7 +83,9 @@ export function SettingsView() {
     };
 
     container.addEventListener("scroll", handleScroll, { passive: true });
-    return () => container.removeEventListener("scroll", handleScroll);
+    return () => {
+      container.removeEventListener("scroll", handleScroll);
+    };
   }, [setActiveSection, isScrollingProgrammatically]);
 
   const scrollToSection = useCallback(
@@ -104,7 +106,9 @@ export function SettingsView() {
         window.history.replaceState(null, "", `#${id}`);
       }
 
-      setTimeout(() => setIsScrollingProgrammatically(false), 500);
+      setTimeout(() => {
+        setIsScrollingProgrammatically(false);
+      }, 500);
     },
     [setActiveSection],
   );
@@ -113,7 +117,9 @@ export function SettingsView() {
     if (!loading) {
       const hash = window.location.hash.slice(1) as SettingsSection;
       if (SETTINGS_SECTIONS.some((s) => s.id === hash)) {
-        setTimeout(() => scrollToSection(hash), 100);
+        setTimeout(() => {
+          scrollToSection(hash);
+        }, 100);
       }
     }
   }, [loading, scrollToSection]);
@@ -136,7 +142,12 @@ export function SettingsView() {
         title="Settings"
         description="Manage your profile, workspace and preferences."
         action={
-          <Button onClick={handleSave} disabled={!dirty || saveStatus === "saving"}>
+          <Button
+            onClick={() => {
+              void handleSave();
+            }}
+            disabled={!dirty || saveStatus === "saving"}
+          >
             {saveStatus === "saving" && <Loader2 className="animate-spin" />}
             {saveStatus === "success" && <Check />}
             {saveStatus === "success" ? "Changes saved" : "Save changes"}
@@ -149,10 +160,7 @@ export function SettingsView() {
         </div>
       )}
       <div className="grid gap-6 md:grid-cols-[150px_1fr]">
-        <SettingsNavigation
-          activeSection={activeSection}
-          onSelect={scrollToSection}
-        />
+        <SettingsNavigation activeSection={activeSection} onSelect={scrollToSection} />
         <div ref={scrollContainerRef} className="space-y-4">
           {loading ? (
             <SettingsLoadingSkeleton />
@@ -190,7 +198,9 @@ function SettingsNavigation({
         {SETTINGS_SECTIONS.map((item) => (
           <button
             key={item.id}
-            onClick={() => onSelect(item.id)}
+            onClick={() => {
+              onSelect(item.id);
+            }}
             className={cn(
               "block w-full rounded-md px-3 py-2 text-left transition-colors hover:bg-[#f5f3fc] hover:text-[#25243a]",
               activeSection === item.id && "bg-[#f0edfa] font-medium text-[#7663c8]",
@@ -207,7 +217,9 @@ function SettingsNavigation({
             key={item.id}
             role="tab"
             aria-selected={activeSection === item.id}
-            onClick={() => onSelect(item.id)}
+            onClick={() => {
+              onSelect(item.id);
+            }}
             className={cn(
               "shrink-0 rounded-md px-3 py-1.5 text-xs whitespace-nowrap transition-colors",
               activeSection === item.id

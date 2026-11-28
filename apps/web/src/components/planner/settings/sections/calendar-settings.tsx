@@ -1,7 +1,6 @@
 "use client";
 
-import { useSettingsStore } from "@/lib/settings";
-import type { SettingsSection } from "@/lib/settings";
+import { useSettingsStore, type SettingsSection } from "@/lib/settings";
 import { Switch } from "@/components/ui/switch";
 import {
   Select,
@@ -30,7 +29,9 @@ export function CalendarSettingsSection({ registerRef }: SectionProps) {
       <SettingRow label="Timezone">
         <Select
           value={cal.timezone}
-          onValueChange={(val) => updateDraft("calendar", { timezone: val })}
+          onValueChange={(val) => {
+            if (val) updateDraft("calendar", { timezone: val });
+          }}
         >
           <SelectTrigger className="max-w-56" aria-label="Timezone">
             <SelectValue />
@@ -47,11 +48,9 @@ export function CalendarSettingsSection({ registerRef }: SectionProps) {
       <SettingRow label="Start of week">
         <Select
           value={cal.startOfWeek}
-          onValueChange={(val) =>
-            updateDraft("calendar", {
-              startOfWeek: val as "MONDAY" | "SUNDAY" | "SATURDAY",
-            })
-          }
+          onValueChange={(val) => {
+            if (val) updateDraft("calendar", { startOfWeek: val });
+          }}
         >
           <SelectTrigger aria-label="Start of week">
             <SelectValue />
@@ -66,11 +65,9 @@ export function CalendarSettingsSection({ registerRef }: SectionProps) {
       <SettingRow label="Default view">
         <Select
           value={cal.defaultView}
-          onValueChange={(val) =>
-            updateDraft("calendar", {
-              defaultView: val as "MONTH" | "WEEK" | "DAY",
-            })
-          }
+          onValueChange={(val) => {
+            if (val) updateDraft("calendar", { defaultView: val });
+          }}
         >
           <SelectTrigger aria-label="Default calendar view">
             <SelectValue />
@@ -85,35 +82,45 @@ export function CalendarSettingsSection({ registerRef }: SectionProps) {
       <SettingRow label="Show completed tasks">
         <Switch
           checked={cal.showCompletedTasks}
-          onCheckedChange={(v) => updateDraft("calendar", { showCompletedTasks: v })}
+          onCheckedChange={(v) => {
+            updateDraft("calendar", { showCompletedTasks: v });
+          }}
           aria-label="Show completed tasks"
         />
       </SettingRow>
       <SettingRow label="Show weekends">
         <Switch
           checked={cal.showWeekends}
-          onCheckedChange={(v) => updateDraft("calendar", { showWeekends: v })}
+          onCheckedChange={(v) => {
+            updateDraft("calendar", { showWeekends: v });
+          }}
           aria-label="Show weekends"
         />
       </SettingRow>
       <SettingRow label="Show milestones">
         <Switch
           checked={cal.showMilestones}
-          onCheckedChange={(v) => updateDraft("calendar", { showMilestones: v })}
+          onCheckedChange={(v) => {
+            updateDraft("calendar", { showMilestones: v });
+          }}
           aria-label="Show milestones"
         />
       </SettingRow>
       <SettingRow label="Show task start dates">
         <Switch
           checked={cal.showTaskStartDates}
-          onCheckedChange={(v) => updateDraft("calendar", { showTaskStartDates: v })}
+          onCheckedChange={(v) => {
+            updateDraft("calendar", { showTaskStartDates: v });
+          }}
           aria-label="Show task start dates"
         />
       </SettingRow>
       <SettingRow label="Show task due dates">
         <Switch
           checked={cal.showTaskDueDates}
-          onCheckedChange={(v) => updateDraft("calendar", { showTaskDueDates: v })}
+          onCheckedChange={(v) => {
+            updateDraft("calendar", { showTaskDueDates: v });
+          }}
           aria-label="Show task due dates"
         />
       </SettingRow>

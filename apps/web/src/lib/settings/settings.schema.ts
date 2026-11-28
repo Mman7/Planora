@@ -1,12 +1,14 @@
 import { z } from "zod";
 
+const INVALID_TIME_FORMAT = "Invalid time format";
+
 export const profileSettingsSchema = z.object({
   name: z
     .string()
     .min(1, "Name is required")
     .max(100, "Name must be 100 characters or fewer")
     .transform((val) => val.trim()),
-  email: z.string().email("Invalid email address"),
+  email: z.email("Invalid email address"),
 });
 
 export const workspaceSettingsSchema = z.object({
@@ -26,23 +28,21 @@ export const workspaceSettingsSchema = z.object({
 
 export const workingTimeSettingsSchema = z
   .object({
-    workingDays: z
-      .array(z.number().min(0).max(6))
-      .min(1, "Select at least one working day"),
-    startTime: z.string().regex(/^\d{2}:\d{2}$/, "Invalid time format"),
-    endTime: z.string().regex(/^\d{2}:\d{2}$/, "Invalid time format"),
+    workingDays: z.array(z.number().min(0).max(6)).min(1, "Select at least one working day"),
+    startTime: z.string().regex(/^\d{2}:\d{2}$/, INVALID_TIME_FORMAT),
+    endTime: z.string().regex(/^\d{2}:\d{2}$/, INVALID_TIME_FORMAT),
     breakEnabled: z.boolean(),
     breakStart: z
       .string()
-      .regex(/^\d{2}:\d{2}$/, "Invalid time format")
+      .regex(/^\d{2}:\d{2}$/, INVALID_TIME_FORMAT)
       .nullable(),
     breakEnd: z
       .string()
-      .regex(/^\d{2}:\d{2}$/, "Invalid time format")
+      .regex(/^\d{2}:\d{2}$/, INVALID_TIME_FORMAT)
       .nullable(),
   })
   .refine((data) => data.endTime > data.startTime, {
-    message: "End time must be later than start time",
+    error: "End time must be later than start time",
     path: ["endTime"],
   })
   .refine(
@@ -51,7 +51,7 @@ export const workingTimeSettingsSchema = z
       if (!data.breakStart || !data.breakEnd) return false;
       return data.breakEnd > data.breakStart;
     },
-    { message: "Break end must be later than break start", path: ["breakEnd"] },
+    { error: "Break end must be later than break start", path: ["breakEnd"] },
   )
   .refine(
     (data) => {
@@ -59,7 +59,7 @@ export const workingTimeSettingsSchema = z
       return data.breakStart >= data.startTime && data.breakEnd <= data.endTime;
     },
     {
-      message: "Break time must be within working hours",
+      error: "Break time must be within working hours",
       path: ["breakStart"],
     },
   );

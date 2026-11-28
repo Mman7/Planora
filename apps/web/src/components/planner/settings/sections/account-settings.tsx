@@ -73,7 +73,13 @@ export function AccountSettingsSection({ registerRef }: SectionProps) {
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={handleSignOut}>Sign out</AlertDialogAction>
+                <AlertDialogAction
+                  onClick={() => {
+                    void handleSignOut();
+                  }}
+                >
+                  Sign out
+                </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>

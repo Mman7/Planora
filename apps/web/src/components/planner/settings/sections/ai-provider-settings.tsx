@@ -2,8 +2,12 @@
 
 import { useState } from "react";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
-import { useSettingsStore, AI_PROVIDERS } from "@/lib/settings";
-import type { AIProviderType, SettingsSection } from "@/lib/settings";
+import {
+  AI_PROVIDERS,
+  useSettingsStore,
+  type AIProviderType,
+  type SettingsSection,
+} from "@/lib/settings";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -55,13 +59,15 @@ export function AIProviderSettingsSection({ registerRef }: SectionProps) {
         return <Badge className="bg-[#f9eaea] text-[#b96b72]">Invalid credentials</Badge>;
       case "FAILED":
         return <Badge className="bg-[#f9eaea] text-[#b96b72]">Connection failed</Badge>;
-      default:
+      case "NOT_CONFIGURED":
+      case undefined:
         return <Badge variant="secondary">Not configured</Badge>;
+      default:
+        return <Badge variant="secondary">Unknown status</Badge>;
     }
   };
 
-  const providerName =
-    AI_PROVIDERS.find((p) => p.id === aiProvider?.provider)?.name ?? "None";
+  const providerName = AI_PROVIDERS.find((p) => p.id === aiProvider?.provider)?.name ?? "None";
 
   return (
     <SettingsGroup id="ai-provider" title="AI provider" registerRef={registerRef}>
@@ -71,7 +77,9 @@ export function AIProviderSettingsSection({ registerRef }: SectionProps) {
         ) : (
           <Select
             value={selectedProvider ?? undefined}
-            onValueChange={(val) => setSelectedProvider(val as AIProviderType)}
+            onValueChange={(val) => {
+              setSelectedProvider(val);
+            }}
           >
             <SelectTrigger className="max-w-48" aria-label="AI provider">
               <SelectValue placeholder="Select provider" />
@@ -91,7 +99,13 @@ export function AIProviderSettingsSection({ registerRef }: SectionProps) {
         {isConnected ? (
           <div className="flex items-center gap-2">
             {statusBadge()}
-            <Button variant="outline" size="sm" onClick={handleDisconnect}>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                void handleDisconnect();
+              }}
+            >
               Disconnect
             </Button>
           </div>
@@ -101,7 +115,9 @@ export function AIProviderSettingsSection({ registerRef }: SectionProps) {
               <Input
                 type={showKey ? "text" : "password"}
                 value={apiKey}
-                onChange={(e) => setApiKey(e.target.value)}
+                onChange={(e) => {
+                  setApiKey(e.target.value);
+                }}
                 placeholder="Enter API key"
                 className="w-48 pr-8"
                 autoComplete="off"
@@ -109,7 +125,9 @@ export function AIProviderSettingsSection({ registerRef }: SectionProps) {
               />
               <button
                 type="button"
-                onClick={() => setShowKey(!showKey)}
+                onClick={() => {
+                  setShowKey(!showKey);
+                }}
                 className="absolute top-1/2 right-2 -translate-y-1/2 text-[#77788a] hover:text-[#25243a]"
                 aria-label={showKey ? "Hide API key" : "Show API key"}
               >
@@ -118,7 +136,9 @@ export function AIProviderSettingsSection({ registerRef }: SectionProps) {
             </div>
             <Button
               size="sm"
-              onClick={handleConnect}
+              onClick={() => {
+                void handleConnect();
+              }}
               disabled={!selectedProvider || !apiKey.trim() || isChecking}
             >
               {isChecking && <Loader2 size={14} className="animate-spin" />}

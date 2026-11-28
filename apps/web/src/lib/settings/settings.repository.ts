@@ -73,7 +73,9 @@ function createDefaultSettings(name: string, email: string): Settings {
 }
 
 async function simulateDelay(ms = 400): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+  await new Promise<void>((resolve) => {
+    setTimeout(resolve, ms);
+  });
 }
 
 export function createMockSettingsRepository(

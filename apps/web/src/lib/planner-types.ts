@@ -1,7 +1,7 @@
 import type { PhaseStatus, Priority, TaskDependency, TaskStatus } from "@repo/shared";
 
 export type View = "dashboard" | "create" | "project" | "assistant" | "settings";
-export type ProjectTab = "overview" | "tasks" | "timeline" | "settings";
+export type ProjectTab = "overview" | "tasks" | "kanban" | "timeline" | "settings";
 
 export type Task = {
   id: string;
@@ -76,6 +76,7 @@ export type UpdateTaskPayload = {
   dueDate?: string | null;
   estimatedMinutes?: number | null;
   assigneeId?: string | null;
+  position?: number;
 };
 
 export type CreatePhasePayload = {

@@ -1,7 +1,6 @@
 "use client";
 
-import { useSettingsStore } from "@/lib/settings";
-import type { SettingsSection } from "@/lib/settings";
+import { useSettingsStore, type SettingsSection } from "@/lib/settings";
 import { Input } from "@/components/ui/input";
 import { SettingsGroup, SettingRow } from "../settings-view";
 
@@ -21,7 +20,9 @@ export function ProfileSettingsSection({ registerRef }: SectionProps) {
         <Input
           id="settings-name"
           value={draft.profile.name}
-          onChange={(e) => updateDraft("profile", { name: e.target.value })}
+          onChange={(e) => {
+            updateDraft("profile", { name: e.target.value });
+          }}
           className="max-w-60"
           maxLength={100}
           required

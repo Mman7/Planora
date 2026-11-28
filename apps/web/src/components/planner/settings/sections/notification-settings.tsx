@@ -1,7 +1,11 @@
 "use client";
 
-import { useSettingsStore, WEEKDAY_LABELS, REMINDER_OPTIONS } from "@/lib/settings";
-import type { SettingsSection } from "@/lib/settings";
+import {
+  REMINDER_OPTIONS,
+  useSettingsStore,
+  WEEKDAY_LABELS,
+  type SettingsSection,
+} from "@/lib/settings";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -41,7 +45,9 @@ export function NotificationSettingsSection({ registerRef }: SectionProps) {
       <SettingRow label="Due date reminders">
         <Switch
           checked={notif.dueDateRemindersEnabled}
-          onCheckedChange={(v) => updateDraft("notifications", { dueDateRemindersEnabled: v })}
+          onCheckedChange={(v) => {
+            updateDraft("notifications", { dueDateRemindersEnabled: v });
+          }}
           aria-label="Enable due date reminders"
         />
       </SettingRow>
@@ -53,7 +59,9 @@ export function NotificationSettingsSection({ registerRef }: SectionProps) {
               <label key={opt.value} className="flex items-center gap-2 text-xs">
                 <Checkbox
                   checked={notif.reminderDaysBefore.includes(opt.value)}
-                  onCheckedChange={() => toggleReminder(opt.value)}
+                  onCheckedChange={() => {
+                    toggleReminder(opt.value);
+                  }}
                 />
                 {opt.label}
               </label>
@@ -64,7 +72,9 @@ export function NotificationSettingsSection({ registerRef }: SectionProps) {
       <SettingRow label="Weekly summary">
         <Switch
           checked={notif.weeklySummaryEnabled}
-          onCheckedChange={(v) => updateDraft("notifications", { weeklySummaryEnabled: v })}
+          onCheckedChange={(v) => {
+            updateDraft("notifications", { weeklySummaryEnabled: v });
+          }}
           aria-label="Enable weekly summary"
         />
       </SettingRow>
@@ -73,9 +83,9 @@ export function NotificationSettingsSection({ registerRef }: SectionProps) {
           <SettingRow label="Summary day">
             <Select
               value={String(notif.weeklySummaryDay)}
-              onValueChange={(val) =>
-                updateDraft("notifications", { weeklySummaryDay: Number(val) })
-              }
+              onValueChange={(val) => {
+                updateDraft("notifications", { weeklySummaryDay: Number(val) });
+              }}
             >
               <SelectTrigger aria-label="Summary day">
                 <SelectValue />
@@ -94,9 +104,9 @@ export function NotificationSettingsSection({ registerRef }: SectionProps) {
               id="settings-summary-time"
               type="time"
               value={notif.weeklySummaryTime}
-              onChange={(e) =>
-                updateDraft("notifications", { weeklySummaryTime: e.target.value })
-              }
+              onChange={(e) => {
+                updateDraft("notifications", { weeklySummaryTime: e.target.value });
+              }}
               className="w-28"
             />
           </SettingRow>
@@ -105,7 +115,9 @@ export function NotificationSettingsSection({ registerRef }: SectionProps) {
       <SettingRow label="In-app notifications">
         <Switch
           checked={notif.inAppEnabled}
-          onCheckedChange={(v) => updateDraft("notifications", { inAppEnabled: v })}
+          onCheckedChange={(v) => {
+            updateDraft("notifications", { inAppEnabled: v });
+          }}
           aria-label="Enable in-app notifications"
         />
       </SettingRow>

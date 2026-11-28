@@ -1,7 +1,6 @@
 "use client";
 
-import { useSettingsStore } from "@/lib/settings";
-import type { SettingsSection } from "@/lib/settings";
+import { useSettingsStore, type SettingsSection } from "@/lib/settings";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -29,7 +28,9 @@ export function WorkspaceSettingsSection({ registerRef }: SectionProps) {
         <Input
           id="settings-workspace-name"
           value={draft.workspace.name}
-          onChange={(e) => updateDraft("workspace", { name: e.target.value })}
+          onChange={(e) => {
+            updateDraft("workspace", { name: e.target.value });
+          }}
           className="max-w-60"
           maxLength={100}
           required
@@ -39,11 +40,11 @@ export function WorkspaceSettingsSection({ registerRef }: SectionProps) {
         <Textarea
           id="settings-workspace-desc"
           value={draft.workspace.description ?? ""}
-          onChange={(e) =>
+          onChange={(e) => {
             updateDraft("workspace", {
               description: e.target.value || null,
-            })
-          }
+            });
+          }}
           className="max-w-60 min-h-8"
           maxLength={500}
           rows={1}
@@ -53,11 +54,9 @@ export function WorkspaceSettingsSection({ registerRef }: SectionProps) {
       <SettingRow label="Default project view">
         <Select
           value={draft.workspace.defaultProjectView}
-          onValueChange={(val) =>
-            updateDraft("workspace", {
-              defaultProjectView: val as "GRID" | "LIST",
-            })
-          }
+          onValueChange={(val) => {
+            if (val) updateDraft("workspace", { defaultProjectView: val });
+          }}
         >
           <SelectTrigger aria-label="Default project view">
             <SelectValue />
@@ -71,11 +70,9 @@ export function WorkspaceSettingsSection({ registerRef }: SectionProps) {
       <SettingRow label="Default task view">
         <Select
           value={draft.workspace.defaultTaskView}
-          onValueChange={(val) =>
-            updateDraft("workspace", {
-              defaultTaskView: val as "LIST" | "BOARD",
-            })
-          }
+          onValueChange={(val) => {
+            if (val) updateDraft("workspace", { defaultTaskView: val });
+          }}
         >
           <SelectTrigger aria-label="Default task view">
             <SelectValue />

@@ -86,7 +86,7 @@ export function Timeline({
             variant="outline"
             size="icon-sm"
             aria-label="Previous period"
-            onClick={() => scrollTimeline(-1)}
+            onClick={() => { scrollTimeline(-1); }}
           >
             <ChevronLeft />
           </Button>
@@ -97,7 +97,7 @@ export function Timeline({
             variant="outline"
             size="icon-sm"
             aria-label="Next period"
-            onClick={() => scrollTimeline(1)}
+            onClick={() => { scrollTimeline(1); }}
           >
             <ChevronRight />
           </Button>

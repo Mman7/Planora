@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Check, Copy, Plus, Sparkles, Trash2 } from "lucide-react";
+import { TaskStatus } from "@repo/shared";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
@@ -18,12 +19,12 @@ import { cn, PageHeader, statusClasses } from "../view-common";
 import { CreateTaskDialog } from "./create-task-dialog";
 import { PhaseFormDialog } from "./phase-dialogs";
 import { ConfirmDialog } from "./phase-group";
-import { formatProjectDate } from "./project-overview";
-import { ProjectOverview } from "./project-overview";
+import { formatProjectDate, ProjectOverview } from "./project-overview";
 import { ProjectSettings } from "./project-settings";
 import { TaskContent } from "./project-task";
 import { TaskDetailsDialog } from "./task-details-dialog";
 import { Timeline } from "./project-timeline";
+import { ProjectKanban } from "./project-kanban";
 
 export function ProjectView({
   project,
@@ -64,13 +65,11 @@ export function ProjectView({
   onRemoveDependency: (taskId: string, dependsOnTaskId: string) => Promise<void>;
   onAssistant: () => void;
 }) {
-  const [createTaskContext, setCreateTaskContext] = useState<{
-    open: boolean;
-    phaseId: string | null;
-  }>({ open: false, phaseId: null });
-  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
-  const allTasks = getAllProjectTasks(project);
-  const selectedTask = allTasks.find((item) => item.id === selectedTaskId) ?? null;
+  const [createTaskContext, setCreateTaskContext] = useState({ open: false, phaseId: null as string | null, status: TaskStatus.Todo });
+  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null); const allTasks = getAllProjectTasks(project);
+  const selectedTask = allTasks.find((item) => item.id === selectedTaskId) ?? null; const openCreateTask = (phaseId: string | null, status = TaskStatus.Todo) => {
+    setCreateTaskContext({ open: true, phaseId, status });
+  };
 
   return (
     <div>
@@ -82,7 +81,7 @@ export function ProjectView({
         onAddPhase={onAddPhase}
         onDeleteProject={onDeleteProject}
         onAddTask={() => {
-          setCreateTaskContext({ open: true, phaseId: null });
+          openCreateTask(null);
         }}
       />
       <ProjectTabBody
@@ -99,11 +98,14 @@ export function ProjectView({
         }}
         onDeleteTask={onDeleteTask}
         onAddTaskInPhase={(phaseId) => {
-          setCreateTaskContext({ open: true, phaseId });
+          openCreateTask(phaseId);
         }}
         onUpdatePhase={onUpdatePhase}
         onReorderPhases={onReorderPhases}
         onDeletePhase={onDeletePhase}
+        onAddTask={(status) => {
+          openCreateTask(null, status);
+        }}
       />
       <ProjectViewModals
         project={project}
@@ -112,7 +114,7 @@ export function ProjectView({
         createTaskContext={createTaskContext}
         selectedTask={selectedTask}
         onCloseCreateTask={() => {
-          setCreateTaskContext({ open: false, phaseId: null });
+          setCreateTaskContext({ open: false, phaseId: null, status: TaskStatus.Todo });
         }}
         onCloseTaskDetails={() => {
           setSelectedTaskId(null);
@@ -141,6 +143,7 @@ function ProjectTabBody({
   onUpdatePhase,
   onReorderPhases,
   onDeletePhase,
+  onAddTask,
 }: {
   tab: ProjectTab;
   project: Project;
@@ -156,6 +159,7 @@ function ProjectTabBody({
   onUpdatePhase: (phaseId: string, input: UpdatePhasePayload) => Promise<void>;
   onReorderPhases: (phaseIds: string[]) => Promise<void>;
   onDeletePhase: (phaseId: string) => Promise<void>;
+  onAddTask: (status: Task["status"]) => void;
 }) {
   if (tab === "overview") {
     return (
@@ -170,6 +174,19 @@ function ProjectTabBody({
   }
   if (tab === "timeline") {
     return <Timeline project={project} onUpdateTask={onUpdateTask} />;
+  }
+  if (tab === "kanban") {
+    return (
+      <ProjectKanban
+        key={allTasks.map((task) => `${task.id}:${task.status}:${String(task.position)}`).join("|")}
+        project={project}
+        tasks={allTasks}
+        currentUser={currentUser}
+        onSelectTask={onSelectTask}
+        onAddTask={onAddTask}
+        onUpdateTask={onUpdateTask}
+      />
+    );
   }
   if (tab === "settings") {
     return <ProjectSettings project={project} onSave={onUpdateProject} />;
@@ -206,7 +223,7 @@ function ProjectViewModals({
   project: Project;
   projects: Project[];
   currentUser: CurrentUser | null;
-  createTaskContext: { open: boolean; phaseId: string | null };
+  createTaskContext: { open: boolean; phaseId: string | null; status: TaskStatus };
   selectedTask: Task | null;
   onCloseCreateTask: () => void;
   onCloseTaskDetails: () => void;
@@ -222,6 +239,7 @@ function ProjectViewModals({
           projects={projects}
           defaultProjectId={project.id}
           defaultPhaseId={createTaskContext.phaseId}
+          defaultStatus={createTaskContext.status}
           currentUser={currentUser}
           onClose={onCloseCreateTask}
           onCreate={onAddTask}
@@ -373,7 +391,7 @@ function ProjectMeta({
         <span>Target {formatProjectDate(project.dueDate)}</span>
       </div>
       <div className="mb-5 flex gap-6 border-b border-[#e2e4ec]">
-        {(["overview", "tasks", "timeline", "settings"] as const).map((item) => (
+        {(["overview", "tasks", "kanban", "timeline", "settings"] as const).map((item) => (
           <button
             key={item}
             onClick={() => {
