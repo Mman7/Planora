@@ -1,8 +1,73 @@
 import { useMemo, useState } from "react";
+import { PhaseStatus, Priority, TaskStatus } from "@repo/shared";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import type { Project } from "@/lib/mock-data";
-import { PageHeader } from "./view-common";
+import type { Project } from "@/lib/planner-types";
+import { PageHeader } from "../view-common";
+
+function buildProposedProject(project: Project): Project {
+  return {
+    ...project,
+    phases: [
+      ...project.phases,
+      {
+        id: "testing",
+        projectId: project.id,
+        name: "Testing",
+        description: null,
+        position: project.phases.length,
+        startDate: null,
+        dueDate: null,
+        isOnHold: false,
+        status: PhaseStatus.NotStarted,
+        progress: 0,
+        tone: "pink" as const,
+        tasks: [
+          {
+            id: "qa",
+            projectId: project.id,
+            phaseId: "testing",
+            name: "Beta testing",
+            assigneeId: null,
+            description: null,
+            status: TaskStatus.Todo,
+            priority: Priority.High,
+            assignee: "AM",
+            startDate: null,
+            dueDate: "2026-01-16",
+            estimatedMinutes: null,
+            completedAt: null,
+            position: 0,
+            due: "16 Jan",
+            start: 52,
+            span: 8,
+            progress: 0,
+          },
+          {
+            id: "feedback",
+            projectId: project.id,
+            phaseId: "testing",
+            name: "Collect launch feedback",
+            assigneeId: null,
+            description: null,
+            status: TaskStatus.Todo,
+            priority: Priority.Medium,
+            assignee: "SM",
+            startDate: null,
+            dueDate: "2026-01-20",
+            estimatedMinutes: null,
+            completedAt: null,
+            position: 1,
+            due: "20 Jan",
+            start: 60,
+            span: 6,
+            progress: 0,
+          },
+        ],
+      },
+    ],
+  };
+}
 
 export function AssistantView({
   project,
@@ -12,48 +77,11 @@ export function AssistantView({
   onApply: (project: Project) => void;
 }) {
   const [proposal, setProposal] = useState(true);
-  const proposedProject = useMemo(
-    () => ({
-      ...project,
-      phases: [
-        ...project.phases,
-        {
-          id: "testing",
-          name: "Testing",
-          tone: "pink" as const,
-          tasks: [
-            {
-              id: "qa",
-              name: "Beta testing",
-              status: "To do" as const,
-              priority: "High" as const,
-              assignee: "AM",
-              due: "16 Jan",
-              start: 52,
-              span: 8,
-              progress: 0,
-            },
-            {
-              id: "feedback",
-              name: "Collect launch feedback",
-              status: "To do" as const,
-              priority: "Medium" as const,
-              assignee: "SM",
-              due: "20 Jan",
-              start: 60,
-              span: 6,
-              progress: 0,
-            },
-          ],
-        },
-      ],
-    }),
-    [project],
-  );
+  const proposedProject = useMemo(() => buildProposedProject(project), [project]);
   return (
     <div>
       <PageHeader title="Assistant" description={project.name} />
-      <div className="max-w-[620px] space-y-3">
+      <div className="max-w-155 space-y-3">
         <div className="ml-auto w-fit rounded-lg bg-[#f0edfa] px-3 py-2 text-sm">
           Let&apos;s improve my project plan. What am I missing?
         </div>

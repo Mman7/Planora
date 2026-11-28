@@ -8,6 +8,20 @@
       "when": 1795775815361,
       "tag": "0000_cynical_silk_fever",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1795857177947,
+      "tag": "0001_rapid_nightcrawler",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1795860384943,
+      "tag": "0002_tiresome_micromacro",
+      "breakpoints": true
     }
   ]
 }

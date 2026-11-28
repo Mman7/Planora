@@ -1,13 +1,50 @@
 import type { ReactNode } from "react";
-
+import { PhaseStatus, Priority, TaskStatus } from "@repo/shared";
 import { cn } from "@/lib/utils";
 
+const IN_PROGRESS_BADGE = "bg-[#e9f0fa] text-[#6483b2]";
+const COMPLETED_BADGE = "bg-[#e8f4ec] text-[#568568]";
+const WARNING_BADGE = "bg-[#fbf2df] text-[#a7803d]";
+const NEUTRAL_BADGE = "bg-[#f0f2f7] text-[#77788a]";
+
 export const statusClasses: Record<string, string> = {
-  "In progress": "bg-[#e9f0fa] text-[#6483b2]",
-  "On track": "bg-[#e8f4ec] text-[#568568]",
-  "At risk": "bg-[#fbf2df] text-[#a7803d]",
-  Done: "bg-[#e8f4ec] text-[#568568]",
-  "To do": "bg-[#f0f2f7] text-[#77788a]",
+  "In progress": IN_PROGRESS_BADGE,
+  "On track": COMPLETED_BADGE,
+  "At risk": WARNING_BADGE,
+  [TaskStatus.Todo]: NEUTRAL_BADGE,
+  [TaskStatus.InProgress]: IN_PROGRESS_BADGE,
+  [TaskStatus.InReview]: "bg-[#f0edfa] text-[#7663c8]",
+  [TaskStatus.Completed]: COMPLETED_BADGE,
+  [TaskStatus.Cancelled]: "bg-[#f4f4f6] text-[#9b9cad] line-through",
+};
+
+export const phaseStatusClasses: Record<PhaseStatus, string> = {
+  [PhaseStatus.NotStarted]: NEUTRAL_BADGE,
+  [PhaseStatus.InProgress]: IN_PROGRESS_BADGE,
+  [PhaseStatus.Completed]: COMPLETED_BADGE,
+  [PhaseStatus.OnHold]: WARNING_BADGE,
+};
+
+export const taskStatusLabels: Record<TaskStatus, string> = {
+  [TaskStatus.Todo]: "To do",
+  [TaskStatus.InProgress]: "In progress",
+  [TaskStatus.InReview]: "In review",
+  [TaskStatus.Completed]: "Completed",
+  [TaskStatus.Cancelled]: "Cancelled",
+};
+
+export const phaseStatusLabels: Record<PhaseStatus, string> = {
+  [PhaseStatus.NotStarted]: "Not started",
+  [PhaseStatus.InProgress]: "In progress",
+  [PhaseStatus.Completed]: "Completed",
+  [PhaseStatus.OnHold]: "On hold",
+};
+
+export const priorityLabels: Record<Priority, string> = {
+  [Priority.Low]: "Low",
+  [Priority.Medium]: "Medium",
+  [Priority.High]: "High",
+  [Priority.Urgent]: "Urgent",
 };
 
 export const phaseColors = {

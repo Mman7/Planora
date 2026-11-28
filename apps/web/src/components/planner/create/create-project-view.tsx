@@ -2,15 +2,22 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { PageHeader } from "./view-common";
+import { PageHeader } from "../view-common";
 
-export function CreateProjectView({ onGenerated }: { onGenerated: () => void }) {
+export function CreateProjectView({
+  onGenerated,
+}: {
+  onGenerated: (name: string, description: string) => Promise<void>;
+}) {
   const [description, setDescription] = useState("");
   const [generating, setGenerating] = useState(false);
+  const [name, setName] = useState("");
   const examples = ["Launch a podcast", "Redesign our website", "Plan a team offsite"];
   const generate = () => {
     setGenerating(true);
-    window.setTimeout(onGenerated, 500);
+    void onGenerated(name.trim() || description.trim().slice(0, 60), description).finally(() => {
+      setGenerating(false);
+    });
   };
   return (
     <div>
@@ -29,7 +36,7 @@ export function CreateProjectView({ onGenerated }: { onGenerated: () => void }) 
             setDescription(event.target.value);
           }}
           placeholder="e.g. A mobile app for booking local fitness classes, launching in 3 months with a team of 4..."
-          className="mt-3 min-h-[116px] resize-none"
+          className="mt-3 min-h-29 resize-none"
         />
         <p className="mt-3 text-xs text-[#77788a]">Try an example</p>
         <div className="mt-2 flex flex-wrap gap-2">
@@ -50,7 +57,14 @@ export function CreateProjectView({ onGenerated }: { onGenerated: () => void }) 
       <div className="mt-4 grid gap-4 rounded-lg border border-[#e2e4ec] bg-white p-4 md:grid-cols-3 md:p-5">
         <label className="text-xs font-medium">
           Project name (optional)
-          <Input className="mt-2" placeholder="Let AI suggest one" />
+          <Input
+            className="mt-2"
+            placeholder="Let AI suggest one"
+            value={name}
+            onChange={(event) => {
+              setName(event.target.value);
+            }}
+          />
         </label>
         <label className="text-xs font-medium">
           Target date (optional)

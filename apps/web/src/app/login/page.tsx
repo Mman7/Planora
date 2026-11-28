@@ -51,9 +51,9 @@ export default function LoginPage() {
 
   return (
     <main className="grid min-h-screen place-items-center bg-[#f7f8fc] px-4 py-10">
-      <section className="w-full max-w-[420px] rounded-xl border border-[#e5e7ef] bg-white p-8 shadow-sm">
+      <section className="w-full max-w-105 rounded-xl border border-[#e5e7ef] bg-white p-8 shadow-sm">
         <div className="mb-8">
-          <p className="mb-3 text-sm font-semibold tracking-tight text-[#7663c8]">Planly</p>
+          <p className="mb-3 text-sm font-semibold tracking-tight text-[#7663c8]">Planie</p>
           <h1 className="text-2xl font-semibold tracking-tight text-[#25243a]">
             {mode === "login" ? "Welcome back" : "Create your workspace"}
           </h1>

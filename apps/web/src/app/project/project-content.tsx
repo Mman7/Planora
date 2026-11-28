@@ -2,13 +2,32 @@
 
 import { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ProjectView } from "@/components/planner/project-view";
+import { ProjectView } from "@/components/planner/project/project-view";
 import { usePlannerLayout } from "@/components/planner/planner-layout";
 
 export function ProjectContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { project, projectTab, selectProject, setProjectTab, updateProject } = usePlannerLayout();
+  const {
+    project,
+    projects,
+    user,
+    projectTab,
+    selectProject,
+    setProjectTab,
+    addTask,
+    addPhase,
+    toggleTask,
+    updateProject,
+    removeProject,
+    updatePhase,
+    reorderPhases,
+    removePhase,
+    updateTaskDetails,
+    removeTask,
+    addTaskDependency,
+    removeTaskDependency,
+  } = usePlannerLayout();
   const projectId = searchParams.get("id");
 
   useEffect(() => {
@@ -20,9 +39,25 @@ export function ProjectContent() {
   return (
     <ProjectView
       project={project}
+      projects={projects}
+      currentUser={user}
       tab={projectTab}
       onTabChange={setProjectTab}
-      onUpdate={updateProject}
+      onAddTask={addTask}
+      onToggleTask={toggleTask}
+      onAddPhase={addPhase}
+      onUpdateProject={updateProject}
+      onDeleteProject={async () => {
+        await removeProject();
+        router.push("/");
+      }}
+      onUpdatePhase={updatePhase}
+      onReorderPhases={reorderPhases}
+      onDeletePhase={removePhase}
+      onUpdateTask={updateTaskDetails}
+      onDeleteTask={removeTask}
+      onAddDependency={addTaskDependency}
+      onRemoveDependency={removeTaskDependency}
       onAssistant={() => {
         router.push("/assistant");
       }}

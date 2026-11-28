@@ -96,6 +96,9 @@ importers:
       '@hookform/resolvers':
         specifier: ^7.0.9
         version: 7.0.9(@standard-schema/spec@1.1.0)(ajv-formats@2.1.1(ajv@8.20.0))(ajv@8.20.0)(react-hook-form@7.92.0(@types/react@19.3.0)(react@19.3.0))(zod@4.6.7)
+      '@repo/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
       '@tanstack/react-query':
         specifier: ^5.108.4
         version: 5.108.4(@types/react@19.3.0)(react@19.3.0)
@@ -180,6 +183,9 @@ importers:
 
   packages/database:
     dependencies:
+      '@repo/shared':
+        specifier: workspace:*
+        version: link:../shared
       drizzle-orm:
         specifier: ^0.45.4
         version: 0.45.4(@cloudflare/workers-types@5.20261127.1)(better-sqlite3@13.2.0)(kysely@0.29.9)

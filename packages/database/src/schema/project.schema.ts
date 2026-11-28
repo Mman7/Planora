@@ -1,4 +1,5 @@
-import { index, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { index, integer, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
+import { Priority, ProjectStatus, TaskStatus } from "@repo/shared";
 import { user } from "./auth.schema";
 
 const timestamps = {
@@ -17,8 +18,8 @@ export const projects = sqliteTable(
     description: text("description"),
     color: text("color"),
     icon: text("icon"),
-    status: text("status").notNull().default("PLANNING"),
-    priority: text("priority").notNull().default("MEDIUM"),
+    status: text("status").notNull().default(ProjectStatus.Planning),
+    priority: text("priority").notNull().default(Priority.Medium),
     startDate: text("start_date"),
     dueDate: text("due_date"),
     archivedAt: integer("archived_at", { mode: "timestamp_ms" }),
@@ -42,6 +43,7 @@ export const phases = sqliteTable(
     position: integer("position").notNull().default(0),
     startDate: text("start_date"),
     endDate: text("end_date"),
+    isOnHold: integer("is_on_hold", { mode: "boolean" }).notNull().default(false),
     ...timestamps,
   },
   (table) => [index("phases_project_position_idx").on(table.projectId, table.position)],
@@ -57,10 +59,13 @@ export const tasks = sqliteTable(
     phaseId: text("phase_id").references(() => phases.id, {
       onDelete: "set null",
     }),
+    assigneeId: text("assignee_id").references(() => user.id, {
+      onDelete: "set null",
+    }),
     title: text("title").notNull(),
     description: text("description"),
-    status: text("status").notNull().default("TODO"),
-    priority: text("priority").notNull().default("MEDIUM"),
+    status: text("status").notNull().default(TaskStatus.Todo),
+    priority: text("priority").notNull().default(Priority.Medium),
     startDate: text("start_date"),
     dueDate: text("due_date"),
     estimatedMinutes: integer("estimated_minutes"),
@@ -92,6 +97,7 @@ export const taskDependencies = sqliteTable(
   (table) => [
     index("task_dependencies_task_idx").on(table.taskId),
     index("task_dependencies_prerequisite_idx").on(table.dependsOnTaskId),
+    uniqueIndex("task_dependencies_pair_idx").on(table.taskId, table.dependsOnTaskId),
   ],
 );
 

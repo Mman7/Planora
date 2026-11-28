@@ -1,16 +1,11 @@
 import { z } from "zod";
+import { Priority, ProjectStatus } from "@repo/shared";
 
 const dateSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Use YYYY-MM-DD dates");
 
-export const projectStatusSchema = z.enum([
-  "PLANNING",
-  "ACTIVE",
-  "ON_HOLD",
-  "COMPLETED",
-  "ARCHIVED",
-]);
+export const projectStatusSchema = z.enum(ProjectStatus);
 
-export const projectPrioritySchema = z.enum(["LOW", "MEDIUM", "HIGH", "URGENT"]);
+export const projectPrioritySchema = z.enum(Priority);
 
 export const createProjectSchema = z
   .object({

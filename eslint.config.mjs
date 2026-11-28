@@ -254,6 +254,13 @@ export default defineConfig([
     },
   },
 
+  {
+    files: ["apps/api/src/modules/**/*.repository.ts"],
+    rules: {
+      "@typescript-eslint/no-unsafe-class-instance-assignment": "off",
+    },
+  },
+
   // ==================================================
   // 6. SonarJS - Cognitive complexity and code smells
   // ==================================================

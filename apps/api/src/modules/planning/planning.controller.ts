@@ -9,6 +9,7 @@ import {
   createPhaseSchema,
   createTaskSchema,
   dependencySchema,
+  reorderPhasesSchema,
   updatePhaseSchema,
   updateTaskSchema,
 } from "./planning.validation";
@@ -65,6 +66,16 @@ export async function updatePhase(c: Context<AppEnv>) {
     ),
   );
 }
+// Controller function to reorder phases for a given project
+export async function reorderPhases(c: Context<AppEnv>) {
+  const input = reorderPhasesSchema.parse(await c.req.json());
+  return c.json(
+    successResponse(
+      await service(c).reorderPhases(await requireUserId(c), id(c, "projectId"), input.phaseIds),
+      "Phases reordered",
+    ),
+  );
+}
 // Controller function to delete a specific phase by ID for a given project
 export async function deletePhase(c: Context<AppEnv>) {
   await service(c).deletePhase(await requireUserId(c), id(c, "projectId"), id(c, "phaseId"));
@@ -116,6 +127,12 @@ export async function updateTask(c: Context<AppEnv>) {
 export async function deleteTask(c: Context<AppEnv>) {
   await service(c).deleteTask(await requireUserId(c), id(c, "projectId"), id(c, "taskId"));
   return c.body(null, 204);
+}
+// Controller function to list all task dependencies for a given project
+export async function listDependencies(c: Context<AppEnv>) {
+  return c.json(
+    successResponse(await service(c).listDependencies(await requireUserId(c), id(c, "projectId"))),
+  );
 }
 // Controller function to add a dependency between tasks for a given project
 export async function addDependency(c: Context<AppEnv>) {

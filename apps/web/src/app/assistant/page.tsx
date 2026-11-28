@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { AssistantView } from "@/components/planner/assistant-view";
+import { AssistantView } from "@/components/planner/assistant/assistant-view";
 import { usePlannerLayout } from "@/components/planner/planner-layout";
 
 export default function AssistantPage() {
@@ -11,7 +11,7 @@ export default function AssistantPage() {
     <AssistantView
       project={project}
       onApply={(nextProject) => {
-        updateProject(nextProject);
+        void updateProject(nextProject);
         setProjectTab("tasks");
         router.push("/project");
       }}

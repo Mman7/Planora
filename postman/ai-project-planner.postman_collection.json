@@ -38,13 +38,8 @@
         "header": [],
         "url": {
           "raw": "{{baseUrl}}/api/health",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "api",
-            "health"
-          ]
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "health"]
         }
       }
     },
@@ -60,15 +55,8 @@
         ],
         "url": {
           "raw": "{{baseUrl}}/api/auth/sign-up/email",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "api",
-            "auth",
-            "sign-up",
-            "email"
-          ]
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "auth", "sign-up", "email"]
         },
         "body": {
           "mode": "raw",
@@ -93,15 +81,8 @@
         ],
         "url": {
           "raw": "{{baseUrl}}/api/auth/sign-in/email",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "api",
-            "auth",
-            "sign-in",
-            "email"
-          ]
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "auth", "sign-in", "email"]
         },
         "body": {
           "mode": "raw",
@@ -121,14 +102,8 @@
         "header": [],
         "url": {
           "raw": "{{baseUrl}}/api/auth/sign-out",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "api",
-            "auth",
-            "sign-out"
-          ]
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "auth", "sign-out"]
         }
       }
     },
@@ -139,14 +114,8 @@
         "header": [],
         "url": {
           "raw": "{{baseUrl}}/api/auth/me",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "api",
-            "auth",
-            "me"
-          ]
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "auth", "me"]
         }
       }
     },
@@ -157,14 +126,8 @@
         "header": [],
         "url": {
           "raw": "{{baseUrl}}/api/auth/*",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "api",
-            "auth",
-            "*"
-          ]
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "auth", "*"]
         }
       }
     },
@@ -175,14 +138,8 @@
         "header": [],
         "url": {
           "raw": "{{baseUrl}}/api/auth/*",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "api",
-            "auth",
-            "*"
-          ]
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "auth", "*"]
         }
       }
     },
@@ -193,13 +150,8 @@
         "header": [],
         "url": {
           "raw": "{{baseUrl}}/api/projects",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "api",
-            "projects"
-          ]
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "projects"]
         }
       }
     },
@@ -215,13 +167,8 @@
         ],
         "url": {
           "raw": "{{baseUrl}}/api/projects",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "api",
-            "projects"
-          ]
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "projects"]
         },
         "body": {
           "mode": "raw",
@@ -241,14 +188,8 @@
         "header": [],
         "url": {
           "raw": "{{baseUrl}}/api/projects/{{projectId}}",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "api",
-            "projects",
-            "{{projectId}}"
-          ]
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "projects", "{{projectId}}"]
         }
       }
     },
@@ -264,14 +205,8 @@
         ],
         "url": {
           "raw": "{{baseUrl}}/api/projects/{{projectId}}",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "api",
-            "projects",
-            "{{projectId}}"
-          ]
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "projects", "{{projectId}}"]
         },
         "body": {
           "mode": "raw",
@@ -291,14 +226,8 @@
         "header": [],
         "url": {
           "raw": "{{baseUrl}}/api/projects/{{projectId}}",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "api",
-            "projects",
-            "{{projectId}}"
-          ]
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "projects", "{{projectId}}"]
         }
       }
     },
@@ -309,15 +238,8 @@
         "header": [],
         "url": {
           "raw": "{{baseUrl}}/api/projects/{{projectId}}/phases",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "api",
-            "projects",
-            "{{projectId}}",
-            "phases"
-          ]
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "projects", "{{projectId}}", "phases"]
         }
       }
     },
@@ -333,15 +255,8 @@
         ],
         "url": {
           "raw": "{{baseUrl}}/api/projects/{{projectId}}/phases",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "api",
-            "projects",
-            "{{projectId}}",
-            "phases"
-          ]
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "projects", "{{projectId}}", "phases"]
         },
         "body": {
           "mode": "raw",
@@ -361,16 +276,8 @@
         "header": [],
         "url": {
           "raw": "{{baseUrl}}/api/projects/{{projectId}}/phases/{{phaseId}}",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "api",
-            "projects",
-            "{{projectId}}",
-            "phases",
-            "{{phaseId}}"
-          ]
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "projects", "{{projectId}}", "phases", "{{phaseId}}"]
         }
       }
     },
@@ -386,16 +293,8 @@
         ],
         "url": {
           "raw": "{{baseUrl}}/api/projects/{{projectId}}/phases/{{phaseId}}",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "api",
-            "projects",
-            "{{projectId}}",
-            "phases",
-            "{{phaseId}}"
-          ]
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "projects", "{{projectId}}", "phases", "{{phaseId}}"]
         },
         "body": {
           "mode": "raw",
@@ -415,16 +314,8 @@
         "header": [],
         "url": {
           "raw": "{{baseUrl}}/api/projects/{{projectId}}/phases/{{phaseId}}",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "api",
-            "projects",
-            "{{projectId}}",
-            "phases",
-            "{{phaseId}}"
-          ]
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "projects", "{{projectId}}", "phases", "{{phaseId}}"]
         }
       }
     },
@@ -435,15 +326,8 @@
         "header": [],
         "url": {
           "raw": "{{baseUrl}}/api/projects/{{projectId}}/tasks",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "api",
-            "projects",
-            "{{projectId}}",
-            "tasks"
-          ]
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "projects", "{{projectId}}", "tasks"]
         }
       }
     },
@@ -459,15 +343,8 @@
         ],
         "url": {
           "raw": "{{baseUrl}}/api/projects/{{projectId}}/tasks",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "api",
-            "projects",
-            "{{projectId}}",
-            "tasks"
-          ]
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "projects", "{{projectId}}", "tasks"]
         },
         "body": {
           "mode": "raw",
@@ -487,16 +364,8 @@
         "header": [],
         "url": {
           "raw": "{{baseUrl}}/api/projects/{{projectId}}/tasks/{{taskId}}",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "api",
-            "projects",
-            "{{projectId}}",
-            "tasks",
-            "{{taskId}}"
-          ]
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "projects", "{{projectId}}", "tasks", "{{taskId}}"]
         }
       }
     },
@@ -512,16 +381,8 @@
         ],
         "url": {
           "raw": "{{baseUrl}}/api/projects/{{projectId}}/tasks/{{taskId}}",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "api",
-            "projects",
-            "{{projectId}}",
-            "tasks",
-            "{{taskId}}"
-          ]
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "projects", "{{projectId}}", "tasks", "{{taskId}}"]
         },
         "body": {
           "mode": "raw",
@@ -541,16 +402,8 @@
         "header": [],
         "url": {
           "raw": "{{baseUrl}}/api/projects/{{projectId}}/tasks/{{taskId}}",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "api",
-            "projects",
-            "{{projectId}}",
-            "tasks",
-            "{{taskId}}"
-          ]
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "projects", "{{projectId}}", "tasks", "{{taskId}}"]
         }
       }
     },
@@ -566,17 +419,8 @@
         ],
         "url": {
           "raw": "{{baseUrl}}/api/projects/{{projectId}}/tasks/{{taskId}}/dependencies",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "api",
-            "projects",
-            "{{projectId}}",
-            "tasks",
-            "{{taskId}}",
-            "dependencies"
-          ]
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "projects", "{{projectId}}", "tasks", "{{taskId}}", "dependencies"]
         },
         "body": {
           "mode": "raw",
@@ -601,17 +445,8 @@
         ],
         "url": {
           "raw": "{{baseUrl}}/api/projects/{{projectId}}/tasks/{{taskId}}/dependencies",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "api",
-            "projects",
-            "{{projectId}}",
-            "tasks",
-            "{{taskId}}",
-            "dependencies"
-          ]
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "projects", "{{projectId}}", "tasks", "{{taskId}}", "dependencies"]
         },
         "body": {
           "mode": "raw",

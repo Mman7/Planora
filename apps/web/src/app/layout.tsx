@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Planly | AI Project Planner",
+  title: "Planie | AI Project Planner",
   description: "Turn project ideas into clear, actionable plans.",
 };
 

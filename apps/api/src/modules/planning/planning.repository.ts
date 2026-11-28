@@ -1,4 +1,5 @@
 import { and, asc, eq } from "drizzle-orm";
+import { TaskStatus } from "@repo/shared";
 import { phases, projects, taskDependencies, tasks, type Database } from "@repo/database";
 import type {
   CreatePhaseInput,
@@ -6,6 +7,13 @@ import type {
   UpdatePhaseInput,
   UpdateTaskInput,
 } from "./planning.validation";
+
+function mapPhaseRecord<T extends { endDate: string | null }>(phase: T) {
+  return {
+    ...phase,
+    dueDate: phase.endDate,
+  };
+}
 
 function createPhaseRepository(database: Database) {
   return {
@@ -16,6 +24,8 @@ function createPhaseRepository(database: Database) {
     getPhase: (projectId: string, phaseId: string) => getPhase(database, projectId, phaseId),
     updatePhase: (projectId: string, phaseId: string, input: UpdatePhaseInput) =>
       updatePhase(database, projectId, phaseId, input),
+    reorderPhases: (projectId: string, phaseIds: string[]) =>
+      reorderPhases(database, projectId, phaseIds),
     deletePhase: (projectId: string, phaseId: string) => deletePhase(database, projectId, phaseId),
   };
 }
@@ -45,6 +55,7 @@ function createDependencyRepository(database: Database) {
       removeDependency(database, taskId, dependsOnTaskId),
   };
 }
+
 // Planning repository that combines phase, task, and dependency repositories
 export function createPlanningRepository(database: Database) {
   return {
@@ -64,25 +75,29 @@ async function ownsProject(database: Database, ownerId: string, projectId: strin
 }
 
 async function listPhases(database: Database, projectId: string) {
-  return database
+  const rows = await database
     .select()
     .from(phases)
     .where(eq(phases.projectId, projectId))
-    .orderBy(asc(phases.position));
+    .orderBy(asc(phases.position), asc(phases.createdAt));
+  return rows.map(mapPhaseRecord);
 }
 
 async function createPhase(database: Database, projectId: string, input: CreatePhaseInput) {
+  const { dueDate, endDate, ...rest } = input;
+  const resolvedEndDate = dueDate !== undefined ? dueDate : endDate;
   const [phase] = await database
     .insert(phases)
     .values({
       id: crypto.randomUUID(),
       projectId,
-      ...input,
+      ...rest,
+      ...(resolvedEndDate !== undefined ? { endDate: resolvedEndDate } : {}),
       createdAt: new Date(),
       updatedAt: new Date(),
     })
     .returning();
-  return phase;
+  return phase ? mapPhaseRecord(phase) : undefined;
 }
 
 async function getPhase(database: Database, projectId: string, phaseId: string) {
@@ -91,7 +106,7 @@ async function getPhase(database: Database, projectId: string, phaseId: string) 
     .from(phases)
     .where(and(eq(phases.id, phaseId), eq(phases.projectId, projectId)))
     .limit(1);
-  return phase;
+  return phase ? mapPhaseRecord(phase) : undefined;
 }
 
 async function updatePhase(
@@ -100,12 +115,31 @@ async function updatePhase(
   phaseId: string,
   input: UpdatePhaseInput,
 ) {
+  const { dueDate, endDate, ...rest } = input;
+  const resolvedEndDate = dueDate !== undefined ? dueDate : endDate;
   const [phase] = await database
     .update(phases)
-    .set({ ...input, updatedAt: new Date() })
+    .set({
+      ...rest,
+      ...(resolvedEndDate !== undefined ? { endDate: resolvedEndDate } : {}),
+      updatedAt: new Date(),
+    })
     .where(and(eq(phases.id, phaseId), eq(phases.projectId, projectId)))
     .returning();
-  return phase;
+  return phase ? mapPhaseRecord(phase) : undefined;
+}
+
+async function reorderPhases(database: Database, projectId: string, phaseIds: string[]) {
+  const now = new Date();
+  await Promise.all(
+    phaseIds.map((phaseId, index) =>
+      database
+        .update(phases)
+        .set({ position: index, updatedAt: now })
+        .where(and(eq(phases.id, phaseId), eq(phases.projectId, projectId))),
+    ),
+  );
+  return listPhases(database, projectId);
 }
 
 async function deletePhase(database: Database, projectId: string, phaseId: string) {
@@ -131,6 +165,7 @@ async function createTask(database: Database, projectId: string, input: CreateTa
       id: crypto.randomUUID(),
       projectId,
       ...input,
+      ...(input.status === TaskStatus.Completed ? { completedAt: new Date() } : {}),
       createdAt: new Date(),
       updatedAt: new Date(),
     })
@@ -153,16 +188,26 @@ async function updateTask(
   taskId: string,
   input: UpdateTaskInput,
 ) {
+  const completedAtPatch = getCompletedAtPatch(input.status);
   const [task] = await database
     .update(tasks)
     .set({
       ...input,
+      ...completedAtPatch,
       updatedAt: new Date(),
-      ...(input.status === "DONE" ? { completedAt: new Date() } : {}),
     })
     .where(and(eq(tasks.id, taskId), eq(tasks.projectId, projectId)))
     .returning();
   return task;
+}
+
+function getCompletedAtPatch(status: TaskStatus | undefined) {
+  if (status === undefined) {
+    return {};
+  }
+  return {
+    completedAt: status === TaskStatus.Completed ? new Date() : null,
+  };
 }
 
 async function deleteTask(database: Database, projectId: string, taskId: string) {
@@ -188,6 +233,7 @@ async function dependencies(database: Database, projectId: string) {
       id: taskDependencies.id,
       taskId: taskDependencies.taskId,
       dependsOnTaskId: taskDependencies.dependsOnTaskId,
+      createdAt: taskDependencies.createdAt,
     })
     .from(taskDependencies)
     .innerJoin(tasks, eq(tasks.id, taskDependencies.taskId))

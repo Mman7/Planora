@@ -3,9 +3,11 @@
 import { useState, type ReactNode } from "react";
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { cn, PageHeader } from "./view-common";
+import { usePlannerLayout } from "../planner-layout";
+import { cn, PageHeader } from "../view-common";
 
 export function SettingsView() {
+  const { user } = usePlannerLayout();
   const [saved, setSaved] = useState(false);
   const [weekly, setWeekly] = useState(false);
   return (
@@ -48,8 +50,8 @@ export function SettingsView() {
         </nav>
         <div className="space-y-4">
           <SettingsGroup title="Profile">
-            <SettingRow label="Name" value="Aisha Musa" />
-            <SettingRow label="Email" value="aisha@example.com" />
+            <SettingRow label="Name" value={user?.name ?? "Loading..."} />
+            <SettingRow label="Email" value={user?.email ?? "Loading..."} />
           </SettingsGroup>
           <SettingsGroup title="Working time">
             <SettingRow label="Working days" value="Mon - Fri" />

@@ -18,7 +18,11 @@ export function createApp() {
   app.use(
     "/api/*",
     cors({
-      origin: (_origin, c) => (c.env as Bindings).CORS_ORIGIN ?? "http://localhost:3000",
+      origin: (origin, c) => {
+        const configuredOrigin = (c.env as Bindings).CORS_ORIGIN ?? "http://localhost:3000";
+        if (origin && /^https?:\/\/localhost(?::\d+)?$/.test(origin)) return origin;
+        return configuredOrigin;
+      },
       credentials: true,
     }),
   );
