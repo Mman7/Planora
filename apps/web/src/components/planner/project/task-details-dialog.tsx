@@ -20,6 +20,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { DatePicker } from "@/components/ui/date-picker";
 import {
   Select,
   SelectContent,
@@ -280,7 +281,7 @@ function TaskStatusPriorityRow({
           }}
         >
           <SelectTrigger className="mt-1.5 w-full">
-            <SelectValue />
+            <SelectValue>{taskStatusLabels[form.status]}</SelectValue>
           </SelectTrigger>
           <SelectContent>
             {Object.values(TaskStatus).map((item) => (
@@ -300,7 +301,7 @@ function TaskStatusPriorityRow({
           }}
         >
           <SelectTrigger className="mt-1.5 w-full">
-            <SelectValue />
+            <SelectValue>{priorityLabels[form.priority]}</SelectValue>
           </SelectTrigger>
           <SelectContent>
             {Object.values(Priority).map((item) => (
@@ -326,6 +327,9 @@ function TaskPhaseAssigneeRow({
   currentUser: CurrentUser | null;
   onPatch: (patch: Partial<DetailsFormState>) => void;
 }) {
+  const selectedPhase = project.phases.find((phase) => phase.id === form.phaseId);
+  const selectedAssignee = currentUser?.id === form.assigneeId ? currentUser.name : null;
+
   return (
     <div className="grid gap-3 sm:grid-cols-2">
       <label className="block text-sm font-medium">
@@ -337,7 +341,7 @@ function TaskPhaseAssigneeRow({
           }}
         >
           <SelectTrigger className="mt-1.5 w-full">
-            <SelectValue />
+            <SelectValue>{selectedPhase?.name ?? "Unassigned"}</SelectValue>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value={NO_PHASE_VALUE}>Unassigned</SelectItem>
@@ -358,7 +362,7 @@ function TaskPhaseAssigneeRow({
           }}
         >
           <SelectTrigger className="mt-1.5 w-full">
-            <SelectValue />
+            <SelectValue>{selectedAssignee ?? "Unassigned"}</SelectValue>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value={UNASSIGNED_USER}>Unassigned</SelectItem>
@@ -386,24 +390,20 @@ function TaskDateRow({
       <div className="grid gap-3 sm:grid-cols-3">
         <label className="block text-xs font-medium text-[#5f6075]">
           Start date
-          <Input
-            type="date"
+          <DatePicker
             value={form.startDate}
-            onChange={(event) => {
-              onPatch({ startDate: event.target.value });
+            onChange={(value) => {
+              onPatch({ startDate: value });
             }}
-            className="mt-1.5"
           />
         </label>
         <label className="block text-xs font-medium text-[#5f6075]">
           Due date
-          <Input
-            type="date"
+          <DatePicker
             value={form.dueDate}
-            onChange={(event) => {
-              onPatch({ dueDate: event.target.value });
+            onChange={(value) => {
+              onPatch({ dueDate: value });
             }}
-            className="mt-1.5"
           />
         </label>
         <label className="block text-xs font-medium text-[#5f6075]">

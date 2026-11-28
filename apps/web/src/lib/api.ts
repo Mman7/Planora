@@ -128,7 +128,12 @@ export function createProject(input: { name: string; description?: string }) {
 
 export function updateProject(
   projectId: string,
-  input: { name?: string; description?: string; startDate?: string; dueDate?: string },
+  input: {
+    name?: string;
+    description?: string;
+    startDate?: string | null;
+    dueDate?: string | null;
+  },
 ) {
   return request<ApiProject>(`/api/projects/${projectId}`, {
     method: "PATCH",

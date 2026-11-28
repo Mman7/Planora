@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { validatePhaseDateRange } from "@repo/shared";
 import { Button } from "@/components/ui/button";
+import { DatePicker } from "@/components/ui/date-picker";
 import {
   Dialog,
   DialogContent,
@@ -162,25 +163,11 @@ function PhaseFormFields({
       <div className="grid gap-3 sm:grid-cols-2">
         <label className="block text-xs font-medium text-[#5f6075]">
           Start date
-          <Input
-            type="date"
-            value={startDate}
-            onChange={(event) => {
-              onStartDateChange(event.target.value);
-            }}
-            className="mt-1.5"
-          />
+          <DatePicker value={startDate} onChange={onStartDateChange} />
         </label>
         <label className="block text-xs font-medium text-[#5f6075]">
           Due date
-          <Input
-            type="date"
-            value={dueDate}
-            onChange={(event) => {
-              onDueDateChange(event.target.value);
-            }}
-            className="mt-1.5"
-          />
+          <DatePicker value={dueDate} onChange={onDueDateChange} />
         </label>
       </div>
       {error && <p className="text-xs text-red-600">{error}</p>}

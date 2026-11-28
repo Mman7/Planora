@@ -81,7 +81,11 @@ type PlannerContextValue = {
   addTask: (projectId: string, input: CreateTaskPayload) => Promise<void>;
   addPhase: (input: CreatePhasePayload) => Promise<string>;
   toggleTask: (task: Task) => Promise<void>;
-  updateProject: (nameOrProject: string | Project, description?: string) => Promise<void>;
+  updateProject: (
+    nameOrProject: string | Project,
+    description?: string,
+    dueDate?: string | null,
+  ) => Promise<void>;
   removeProject: () => Promise<void>;
   updatePhase: (phaseId: string, input: UpdatePhasePayload) => Promise<void>;
   reorderPhases: (phaseIds: string[]) => Promise<void>;
@@ -228,16 +232,30 @@ function useProjectActions(
     setSelectedProjectId(created.id);
     return created.id;
   };
-  const updateProject = async (nameOrProject: string | Project, description = "") => {
+  const updateProject = async (
+    nameOrProject: string | Project,
+    description = "",
+    dueDate?: string | null,
+  ) => {
     if (!project.id) return;
     const name = typeof nameOrProject === "string" ? nameOrProject : nameOrProject.name;
     const nextDescription =
       typeof nameOrProject === "string" ? description : nameOrProject.description;
-    const updated = await updateProjectApi(project.id, { name, description: nextDescription });
+    const nextDueDate = typeof nameOrProject === "string" ? dueDate : nameOrProject.dueDate;
+    const updated = await updateProjectApi(project.id, {
+      name,
+      description: nextDescription,
+      dueDate: nextDueDate ?? null,
+    });
     setProjects((current) =>
       current.map((item) =>
         item.id === project.id
-          ? { ...item, name: updated.name, description: updated.description ?? "" }
+          ? {
+              ...item,
+              name: updated.name,
+              description: updated.description ?? "",
+              dueDate: updated.dueDate ?? undefined,
+            }
           : item,
       ),
     );

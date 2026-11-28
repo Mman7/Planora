@@ -20,7 +20,10 @@ export const createProjectSchema = z
   })
   .strict();
 
-export const updateProjectSchema = createProjectSchema.partial();
+export const updateProjectSchema = createProjectSchema.partial().extend({
+  startDate: dateSchema.nullable().optional(),
+  dueDate: dateSchema.nullable().optional(),
+});
 
 export const projectListQuerySchema = z
   .object({

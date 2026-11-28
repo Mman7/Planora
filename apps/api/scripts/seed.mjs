@@ -144,7 +144,7 @@ const projects = [
         description: "Understand users and validate the first release.",
         position: 0,
         startDate: "2026-12-01",
-        endDate: "2026-12-14",
+        dueDate: "2026-12-14",
       },
       {
         key: "build",
@@ -152,7 +152,7 @@ const projects = [
         description: "Implement the core booking experience.",
         position: 1,
         startDate: "2026-12-15",
-        endDate: "2027-02-07",
+        dueDate: "2027-02-07",
       },
       {
         key: "launch",
@@ -160,7 +160,7 @@ const projects = [
         description: "Prepare the beta release and measure adoption.",
         position: 2,
         startDate: "2027-02-08",
-        endDate: "2027-02-28",
+        dueDate: "2027-02-28",
       },
     ],
     tasks: [
@@ -249,7 +249,7 @@ const projects = [
         description: "Clarify the message and page structure.",
         position: 0,
         startDate: "2027-01-04",
-        endDate: "2027-01-15",
+        dueDate: "2027-01-15",
       },
       {
         key: "design",
@@ -257,7 +257,7 @@ const projects = [
         description: "Shape the visual system and key pages.",
         position: 1,
         startDate: "2027-01-18",
-        endDate: "2027-01-29",
+        dueDate: "2027-01-29",
       },
       {
         key: "delivery",
@@ -265,7 +265,7 @@ const projects = [
         description: "Build, review, and publish the new site.",
         position: 2,
         startDate: "2027-02-01",
-        endDate: "2027-02-12",
+        dueDate: "2027-02-12",
       },
     ],
     tasks: [

@@ -11,6 +11,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { DatePicker } from "@/components/ui/date-picker";
 import {
   Select,
   SelectContent,
@@ -267,6 +268,9 @@ function CreateTaskProjectPhaseRow({
   phases: Phase[];
   onPatch: (patch: Partial<FormState>) => void;
 }) {
+  const selectedProjectName = projects.find((project) => project.id === form.projectId)?.name;
+  const selectedPhaseName = phases.find((phase) => phase.id === form.phaseId)?.name;
+
   return (
     <div className="grid gap-3 sm:grid-cols-2">
       <label className="block text-sm font-medium">
@@ -278,7 +282,7 @@ function CreateTaskProjectPhaseRow({
           }}
         >
           <SelectTrigger className="mt-1.5 w-full">
-            <SelectValue placeholder="Select project" />
+            <SelectValue>{selectedProjectName ?? "Select project"}</SelectValue>
           </SelectTrigger>
           <SelectContent>
             {projects.map((proj) => (
@@ -298,7 +302,7 @@ function CreateTaskProjectPhaseRow({
           }}
         >
           <SelectTrigger className="mt-1.5 w-full">
-            <SelectValue placeholder="Unassigned" />
+            <SelectValue>{selectedPhaseName ?? "Unassigned"}</SelectValue>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value={NO_PHASE_VALUE}>Unassigned</SelectItem>
@@ -374,7 +378,9 @@ function CreateTaskMetaRow({
           }}
         >
           <SelectTrigger className="mt-1.5 w-full">
-            <SelectValue />
+            <SelectValue>
+              {currentUser?.id === form.assigneeId ? `Myself (${currentUser.name})` : "Unassigned"}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value={UNASSIGNED_USER}>Unassigned</SelectItem>
@@ -415,24 +421,20 @@ function CreateTaskSchedulingSection({
         <div className="mt-3 grid gap-3 sm:grid-cols-3">
           <label className="block text-xs font-medium text-[#5f6075]">
             Start date
-            <Input
-              type="date"
+            <DatePicker
               value={form.startDate}
-              onChange={(event) => {
-                onPatch({ startDate: event.target.value });
+              onChange={(value) => {
+                onPatch({ startDate: value });
               }}
-              className="mt-1.5"
             />
           </label>
           <label className="block text-xs font-medium text-[#5f6075]">
             Due date
-            <Input
-              type="date"
+            <DatePicker
               value={form.dueDate}
-              onChange={(event) => {
-                onPatch({ dueDate: event.target.value });
+              onChange={(value) => {
+                onPatch({ dueDate: value });
               }}
-              className="mt-1.5"
             />
           </label>
           <label className="block text-xs font-medium text-[#5f6075]">

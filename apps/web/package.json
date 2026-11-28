@@ -9,9 +9,10 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@repo/shared": "workspace:*",
     "@base-ui/react": "^1.9.0",
     "@hookform/resolvers": "^7.0.9",
+    "@jaeungkim/gantt-chart": "^1.7.0",
+    "@repo/shared": "workspace:*",
     "@tanstack/react-query": "^5.108.4",
     "class-variance-authority": "^0.7.1",
     "cmdk": "^1.1.1",

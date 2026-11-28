@@ -37,7 +37,7 @@ import {
   taskStatusLabels,
 } from "../view-common";
 import { PhaseFormDialog } from "./phase-dialogs";
-import { formatProjectDate } from "./project-view-sections";
+import { formatProjectDate } from "./project-overview";
 
 export function PhaseGroup({
   phase,
@@ -46,6 +46,8 @@ export function PhaseGroup({
   isFirst,
   isLast,
   onDragStart,
+  onDragOver,
+  onDragEnd,
   onDrop,
   onMoveUp,
   onMoveDown,
@@ -56,6 +58,8 @@ export function PhaseGroup({
   onUpdatePhase,
   onDeletePhase,
   currentUserId,
+  showDropPlaceholder,
+  dropPlaceholderPhase,
 }: {
   phase: Phase;
   project: Project;
@@ -63,6 +67,8 @@ export function PhaseGroup({
   isFirst: boolean;
   isLast: boolean;
   onDragStart: () => void;
+  onDragOver: () => void;
+  onDragEnd: () => void;
   onDrop: () => void;
   onMoveUp: () => void;
   onMoveDown: () => void;
@@ -73,19 +79,56 @@ export function PhaseGroup({
   onUpdatePhase: (phaseId: string, input: UpdatePhasePayload) => Promise<void>;
   onDeletePhase: (phaseId: string) => Promise<void>;
   currentUserId?: string;
+  showDropPlaceholder: boolean;
+  dropPlaceholderPhase?: Phase;
 }) {
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
+  const placeholderPhase = dropPlaceholderPhase ?? phase;
 
   return (
     <section
       draggable
-      onDragStart={onDragStart}
+      onDragStart={(event) => {
+        event.dataTransfer.effectAllowed = "move";
+        event.dataTransfer.setData("text/plain", phase.id);
+
+        const dragPreview = document.createElement("div");
+        dragPreview.textContent = `|  ${phase.name}  |  ${phase.tasks.length} tasks  |  ${phase.progress}%`;
+        dragPreview.style.position = "fixed";
+        dragPreview.style.top = "-1000px";
+        dragPreview.style.left = "-1000px";
+        dragPreview.style.padding = "6px 10px";
+        dragPreview.style.border = "1px solid #e2e4ec";
+        dragPreview.style.borderRadius = "6px";
+        dragPreview.style.background = "white";
+        dragPreview.style.color = "#25263a";
+        dragPreview.style.fontSize = "14px";
+        dragPreview.style.boxShadow = "0 2px 8px rgba(37, 38, 58, 0.16)";
+        document.body.appendChild(dragPreview);
+        event.dataTransfer.setDragImage(dragPreview, 10, 10);
+        requestAnimationFrame(() => {
+          dragPreview.remove();
+        });
+        onDragStart();
+      }}
+      onDragEnd={onDragEnd}
       onDragOver={(event) => {
         event.preventDefault();
+        onDragOver();
       }}
       onDrop={onDrop}
     >
+      {showDropPlaceholder && (
+        <div className="mb-2 flex min-h-10 items-center gap-2 rounded-lg border border-dashed border-[#7663c8] bg-[#f7f5ff] px-3 text-sm text-[#7663c8] opacity-70">
+          <GripVertical size={14} className="mr-2" />
+          <span className="size-2 rounded-full bg-[#7663c8]" />
+          <span className="font-semibold">{placeholderPhase.name}</span>
+          <span className="text-xs">
+            {placeholderPhase.tasks.length} tasks · {placeholderPhase.progress}%
+          </span>
+        </div>
+      )}
       <PhaseHeader
         phase={phase}
         isFirst={isFirst}
@@ -324,6 +367,8 @@ export function TaskRow({
       <div className="flex min-w-0 items-center gap-3">
         <Checkbox
           checked={isCompleted}
+          className={blocked ? "bg-gray-200 opacity-60" : ""}
+          disabled={blocked}
           onCheckedChange={() => {
             void onToggle(task);
           }}

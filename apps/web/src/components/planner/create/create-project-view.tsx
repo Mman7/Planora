@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { DatePicker } from "@/components/ui/date-picker";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { PageHeader } from "../view-common";
@@ -12,6 +13,7 @@ export function CreateProjectView({
   const [description, setDescription] = useState("");
   const [generating, setGenerating] = useState(false);
   const [name, setName] = useState("");
+  const [targetDate, setTargetDate] = useState("");
   const examples = ["Launch a podcast", "Redesign our website", "Plan a team offsite"];
   const generate = () => {
     setGenerating(true);
@@ -68,7 +70,7 @@ export function CreateProjectView({
         </label>
         <label className="text-xs font-medium">
           Target date (optional)
-          <Input className="mt-2" placeholder="Pick a date" type="date" />
+          <DatePicker value={targetDate} onChange={setTargetDate} />
         </label>
         <label className="text-xs font-medium">
           Team size

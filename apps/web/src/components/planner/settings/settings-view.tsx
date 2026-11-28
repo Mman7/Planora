@@ -1,106 +1,294 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
-import { Check } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Check, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import {
+  createMockSettingsRepository,
+  SETTINGS_SECTIONS,
+  useSettingsStore,
+  type SettingsSection,
+} from "@/lib/settings";
 import { usePlannerLayout } from "../planner-layout";
-import { cn, PageHeader } from "../view-common";
+import { PageHeader } from "../view-common";
+import { ProfileSettingsSection } from "./sections/profile-settings";
+import { WorkspaceSettingsSection } from "./sections/workspace-settings";
+import { WorkingTimeSettingsSection } from "./sections/working-time-settings";
+import { CalendarSettingsSection } from "./sections/calendar-settings";
+import { AIProviderSettingsSection } from "./sections/ai-provider-settings";
+import { NotificationSettingsSection } from "./sections/notification-settings";
+import { AccountSettingsSection } from "./sections/account-settings";
 
 export function SettingsView() {
   const { user } = usePlannerLayout();
-  const [saved, setSaved] = useState(false);
-  const [weekly, setWeekly] = useState(false);
+  const {
+    loading,
+    saveStatus,
+    saveError,
+    activeSection,
+    setActiveSection,
+    setRepository,
+    loadSettings,
+    isDirty,
+    saveChanges,
+  } = useSettingsStore();
+
+  const sectionRefs = useRef<Map<SettingsSection, HTMLElement>>(new Map());
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [isScrollingProgrammatically, setIsScrollingProgrammatically] = useState(false);
+
+  const repository = useMemo(() => {
+    if (!user) return null;
+    return createMockSettingsRepository(user.name, user.email);
+  }, [user]);
+
+  useEffect(() => {
+    if (repository) {
+      setRepository(repository);
+      void loadSettings();
+    }
+  }, [repository, setRepository, loadSettings]);
+
+  const registerSection = useCallback((id: SettingsSection, el: HTMLElement | null) => {
+    if (el) {
+      sectionRefs.current.set(id, el);
+    } else {
+      sectionRefs.current.delete(id);
+    }
+  }, []);
+
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const handleScroll = () => {
+      if (isScrollingProgrammatically) return;
+
+      const containerTop = container.getBoundingClientRect().top;
+      let closestSection: SettingsSection = "profile";
+      let closestDistance = Infinity;
+
+      for (const [id, el] of sectionRefs.current) {
+        const rect = el.getBoundingClientRect();
+        const distance = Math.abs(rect.top - containerTop - 20);
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestSection = id;
+        }
+      }
+
+      setActiveSection(closestSection);
+    };
+
+    container.addEventListener("scroll", handleScroll, { passive: true });
+    return () => container.removeEventListener("scroll", handleScroll);
+  }, [setActiveSection, isScrollingProgrammatically]);
+
+  const scrollToSection = useCallback(
+    (id: SettingsSection) => {
+      const el = sectionRefs.current.get(id);
+      if (!el) return;
+
+      setActiveSection(id);
+      setIsScrollingProgrammatically(true);
+
+      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      el.scrollIntoView({
+        behavior: prefersReducedMotion ? "instant" : "smooth",
+        block: "start",
+      });
+
+      if (window.location.hash !== `#${id}`) {
+        window.history.replaceState(null, "", `#${id}`);
+      }
+
+      setTimeout(() => setIsScrollingProgrammatically(false), 500);
+    },
+    [setActiveSection],
+  );
+
+  useEffect(() => {
+    if (!loading) {
+      const hash = window.location.hash.slice(1) as SettingsSection;
+      if (SETTINGS_SECTIONS.some((s) => s.id === hash)) {
+        setTimeout(() => scrollToSection(hash), 100);
+      }
+    }
+  }, [loading, scrollToSection]);
+
+  const handleSave = async () => {
+    if (!isDirty()) return;
+    await saveChanges();
+    if (useSettingsStore.getState().saveStatus === "success") {
+      toast.success("Settings saved successfully");
+    } else if (useSettingsStore.getState().saveStatus === "error") {
+      toast.error("Failed to save some settings");
+    }
+  };
+
+  const dirty = isDirty();
+
   return (
     <div>
       <PageHeader
         title="Settings"
         description="Manage your profile, workspace and preferences."
         action={
-          <Button
-            onClick={() => {
-              setSaved(true);
-            }}
-          >
-            {saved && <Check />}
-            {saved ? "Changes saved" : "Save changes"}
+          <Button onClick={handleSave} disabled={!dirty || saveStatus === "saving"}>
+            {saveStatus === "saving" && <Loader2 className="animate-spin" />}
+            {saveStatus === "success" && <Check />}
+            {saveStatus === "success" ? "Changes saved" : "Save changes"}
           </Button>
         }
       />
+      {saveError && (
+        <div className="mb-4 rounded-lg bg-[#f9eaea] px-4 py-3 text-sm text-[#b96b72]">
+          {saveError}
+        </div>
+      )}
       <div className="grid gap-6 md:grid-cols-[150px_1fr]">
-        <nav className="space-y-2 text-sm text-[#77788a]">
-          {[
-            "Profile",
-            "Workspace",
-            "Working time",
-            "Calendar",
-            "AI provider",
-            "Notifications",
-            "Account",
-          ].map((item, index) => (
-            <button
-              key={item}
-              className={cn(
-                "block w-full rounded-md px-3 py-2 text-left",
-                index === 0 && "bg-[#f0edfa] font-medium text-[#7663c8]",
-              )}
-            >
-              {item}
-            </button>
-          ))}
-        </nav>
-        <div className="space-y-4">
-          <SettingsGroup title="Profile">
-            <SettingRow label="Name" value={user?.name ?? "Loading..."} />
-            <SettingRow label="Email" value={user?.email ?? "Loading..."} />
-          </SettingsGroup>
-          <SettingsGroup title="Working time">
-            <SettingRow label="Working days" value="Mon - Fri" />
-            <SettingRow label="Working hours" value="9:00 - 17:00" />
-          </SettingsGroup>
-          <SettingsGroup title="AI provider">
-            <SettingRow label="Provider" value="Claude" />
-            <SettingRow label="API key" value="Connected" />
-          </SettingsGroup>
-          <SettingsGroup title="Notifications">
-            <SettingRow label="Due date reminders" value="On" />
-            <div className="flex items-center justify-between border-t border-[#e5e7ef] px-3 py-3 text-sm">
-              <span>Weekly summary</span>
-              <button
-                onClick={() => {
-                  setWeekly(!weekly);
-                }}
-                className={cn(
-                  "relative h-5 w-9 rounded-full transition-colors",
-                  weekly ? "bg-[#7663c8]" : "bg-[#dfe2ea]",
-                )}
-              >
-                <span
-                  className={cn(
-                    "absolute top-0.5 size-4 rounded-full bg-white transition-transform",
-                    weekly ? "translate-x-4" : "translate-x-0.5",
-                  )}
-                />
-              </button>
-            </div>
-          </SettingsGroup>
+        <SettingsNavigation
+          activeSection={activeSection}
+          onSelect={scrollToSection}
+        />
+        <div ref={scrollContainerRef} className="space-y-4">
+          {loading ? (
+            <SettingsLoadingSkeleton />
+          ) : (
+            <>
+              <ProfileSettingsSection registerRef={registerSection} />
+              <WorkspaceSettingsSection registerRef={registerSection} />
+              <WorkingTimeSettingsSection registerRef={registerSection} />
+              <CalendarSettingsSection registerRef={registerSection} />
+              <AIProviderSettingsSection registerRef={registerSection} />
+              <NotificationSettingsSection registerRef={registerSection} />
+              <AccountSettingsSection registerRef={registerSection} />
+            </>
+          )}
         </div>
       </div>
     </div>
   );
 }
-function SettingsGroup({ title, children }: { title: string; children: ReactNode }) {
+
+function SettingsNavigation({
+  activeSection,
+  onSelect,
+}: {
+  activeSection: SettingsSection;
+  onSelect: (id: SettingsSection) => void;
+}) {
   return (
-    <section className="overflow-hidden rounded-lg border border-[#e2e4ec] bg-white">
-      <h2 className="border-b border-[#e5e7ef] px-3 py-3 text-sm font-semibold">{title}</h2>
+    <>
+      {/* Desktop: vertical nav */}
+      <nav
+        className="sticky top-8 hidden space-y-1 self-start text-sm text-[#77788a] md:block"
+        aria-label="Settings sections"
+      >
+        {SETTINGS_SECTIONS.map((item) => (
+          <button
+            key={item.id}
+            onClick={() => onSelect(item.id)}
+            className={cn(
+              "block w-full rounded-md px-3 py-2 text-left transition-colors hover:bg-[#f5f3fc] hover:text-[#25243a]",
+              activeSection === item.id && "bg-[#f0edfa] font-medium text-[#7663c8]",
+            )}
+          >
+            {item.label}
+          </button>
+        ))}
+      </nav>
+      {/* Mobile: horizontal scrollable nav */}
+      <div className="flex gap-1 overflow-x-auto pb-2 md:hidden" role="tablist">
+        {SETTINGS_SECTIONS.map((item) => (
+          <button
+            key={item.id}
+            role="tab"
+            aria-selected={activeSection === item.id}
+            onClick={() => onSelect(item.id)}
+            className={cn(
+              "shrink-0 rounded-md px-3 py-1.5 text-xs whitespace-nowrap transition-colors",
+              activeSection === item.id
+                ? "bg-[#f0edfa] font-medium text-[#7663c8]"
+                : "text-[#77788a] hover:bg-[#f5f3fc]",
+            )}
+          >
+            {item.label}
+          </button>
+        ))}
+      </div>
+    </>
+  );
+}
+
+function SettingsLoadingSkeleton() {
+  return (
+    <div className="space-y-4">
+      {Array.from({ length: 4 }).map((_, i) => (
+        <div key={i} className="animate-pulse rounded-lg border border-[#e2e4ec] bg-white p-4">
+          <div className="mb-3 h-4 w-24 rounded bg-[#f0f2f7]" />
+          <div className="space-y-3">
+            <div className="h-8 w-full rounded bg-[#f0f2f7]" />
+            <div className="h-8 w-3/4 rounded bg-[#f0f2f7]" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export function SettingsGroup({
+  id,
+  title,
+  children,
+  registerRef,
+}: {
+  id: string;
+  title: string;
+  children: React.ReactNode;
+  registerRef?: (id: SettingsSection, el: HTMLElement | null) => void;
+}) {
+  const ref = useCallback(
+    (el: HTMLElement | null) => {
+      registerRef?.(id as SettingsSection, el);
+    },
+    [id, registerRef],
+  );
+
+  return (
+    <section
+      ref={ref}
+      id={id}
+      className="scroll-mt-4 overflow-hidden rounded-lg border border-[#e2e4ec] bg-white"
+    >
+      <h2 className="border-b border-[#e5e7ef] px-4 py-3 text-sm font-semibold">{title}</h2>
       {children}
     </section>
   );
 }
-function SettingRow({ label, value }: { label: string; value: string }) {
+
+export function SettingRow({
+  label,
+  description,
+  children,
+  htmlFor,
+}: {
+  label: string;
+  description?: string;
+  children: React.ReactNode;
+  htmlFor?: string;
+}) {
   return (
-    <div className="flex items-center justify-between border-b border-[#e5e7ef] px-3 py-3 text-sm last:border-0">
-      <span>{label}</span>
-      <span className="text-xs text-[#77788a]">{value}</span>
+    <div className="flex items-center justify-between gap-4 border-b border-[#e5e7ef] px-4 py-3 text-sm last:border-0">
+      <div className="min-w-0 shrink-0">
+        <label htmlFor={htmlFor} className="font-medium text-[#25243a]">
+          {label}
+        </label>
+        {description && <p className="mt-0.5 text-xs text-[#77788a]">{description}</p>}
+      </div>
+      <div className="flex min-w-0 items-center justify-end gap-2">{children}</div>
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import type { PhaseStatus, Priority, TaskDependency, TaskStatus } from "@repo/shared";
 
 export type View = "dashboard" | "create" | "project" | "assistant" | "settings";
-export type ProjectTab = "overview" | "tasks" | "timeline";
+export type ProjectTab = "overview" | "tasks" | "timeline" | "settings";
 
 export type Task = {
   id: string;
